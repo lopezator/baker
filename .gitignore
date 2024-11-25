@@ -1,0 +1,5 @@
+.idea/
+bin/
+build/container/*-linux-amd64
+build/container/*-darwin-amd64
+build/container/*-windows-amd64.exe
