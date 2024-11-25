@@ -1,0 +1,10 @@
+FROM golang:1.23.2-bullseye
+
+ENV OS linux
+ENV GO111MODULE on
+ENV CGO_ENABLED 0
+ENV PKGPATH github.com/lopezator/cache-test
+
+# copy current workspace
+WORKDIR ${GOPATH}/src/${PKGPATH}
+COPY . ${GOPATH}/src/${PKGPATH}
