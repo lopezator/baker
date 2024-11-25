@@ -1,20 +1,22 @@
-// main.go
-//go:generate go run build_delay.go
-
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	s := "gopher"
-	fmt.Printf("Hello and welcome, %s!\n", s)
+	r := gin.Default()
 
-	for i := 1; i <= 5; i++ {
-		fmt.Println("i =", 100/i)
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+
+	if err := r.Run(":1337"); err != nil {
+		log.Fatal(err)
 	}
 }
-
-//TIP See GoLand help at <a href="https://www.jetbrains.com/help/go/">jetbrains.com/help/go/</a>.
-// Also, you can try interactive lessons for GoLand by selecting 'Help | Learn IDE Features' from the main menu.

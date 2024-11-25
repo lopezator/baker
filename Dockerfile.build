@@ -1,10 +1,35 @@
-FROM golang:1.23.2-bullseye
+# Base stage for dependencies and tools
+FROM golang:1.23.2-bullseye AS base
 
-ENV OS linux
-ENV GO111MODULE on
-ENV CGO_ENABLED 0
-ENV PKGPATH github.com/lopezator/cache-test
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    PKGPATH=github.com/lopezator/cache-test
+
+# Install golangci-lint
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v1.61.0
 
 # copy current workspace
 WORKDIR ${GOPATH}/src/${PKGPATH}
-COPY . ${GOPATH}/src/${PKGPATH}
+COPY . .
+
+# Prepare stage: Cache go modules
+FROM base AS prepare
+RUN --mount=type=cache,target=/go/pkg/mod \
+    make prepare
+
+# Lint stage: Cache golangci-lint
+FROM prepare AS sanity-check
+RUN --mount=type=cache,target=~/.cache/golangci-lint \
+    --mount=type=cache,target=/go/pkg/mod \
+    make sanity-check
+
+# Build stage: Cache Go build artifacts
+FROM prepare AS build
+RUN --mount=type=cache,target=~/.cache/go-build \
+    --mount=type=cache,target=/go/pkg/mod \
+    make go-build
+
+# Final runtime image
+FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS runtime
+COPY --from=build build/container/cache-test-linux-amd64 /usr/local/bin/cache-test
+CMD ["cache-test"]
