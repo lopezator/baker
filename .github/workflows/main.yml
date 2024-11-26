@@ -75,11 +75,11 @@ jobs:
         run: docker buildx build -f Dockerfile.build --target sanity-check --cache-from=type=gha --cache-to=type=gha,mode=max .
 
       - name: build
-        run: docker buildx build -f Dockerfile.build --target build --cache-from=type=gha --cache-to=type=gha,mode=max --load .
+        run: docker buildx build -f Dockerfile.build --target build --cache-from=type=gha --cache-to=type=gha,mode=max .
 
-      - name: copy binary
-        run: docker cp $(docker create cache-test-build):/usr/local/bin/cache-test build/container/cache-test-linux-amd64
-
-      - name: release
-        if: github.ref == 'refs/heads/main'
-        run: make release
+#      - name: copy binary
+#        run: docker cp $(docker create cache-test-build):/usr/local/bin/cache-test build/container/cache-test-linux-amd64
+#
+#      - name: release
+#        if: github.ref == 'refs/heads/main'
+#        run: make release
