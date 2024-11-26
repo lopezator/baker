@@ -81,21 +81,21 @@ jobs:
         uses: actions/cache@v3
         with:
           path: cache-golangci-lint
-          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-${{ github.sha }}
+          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main
         if: github.ref == 'refs/heads/main'
 
       - name: save go mod cache
         uses: actions/cache@v3
         with:
           path: go-pkg-mod
-          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-${{ github.sha }}
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main
         if: github.ref == 'refs/heads/main'
 
       - name: save go build cache
         uses: actions/cache@v3
         with:
           path: cache-go-build
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-${{ github.sha }}
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main
         if: github.ref == 'refs/heads/main'
 
       - name: release
