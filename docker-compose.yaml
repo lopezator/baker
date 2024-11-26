@@ -1,0 +1,21 @@
+services:
+
+  docker-in-docker:
+    image: docker:dind
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    expose:
+      - 2375
+
+  cache-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.build
+      target: compose
+    image: cache-test:build
+    depends_on:
+      - docker-in-docker
+    environment:
+      DOCKER_HOST: tcp://docker-in-docker:2375
+    tty: true

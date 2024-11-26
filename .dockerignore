@@ -1,6 +1,8 @@
 # cache-dance folder
 scratch
+
 # cache source folders
+tmp-buildx-cache
 cache-golangci-lint
 cache-go-build
 go-pkg-mod
