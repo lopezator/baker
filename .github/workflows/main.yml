@@ -19,11 +19,10 @@ jobs:
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: cache-test:build
+          images: cache-test
 
-      # Step 4: Restore Golangci-lint cache (restore from main branch for PRs and pushes to main)
-      - name: Restore Golangci-lint cache
-        uses: actions/cache@v3
+      - name: restore golangci-lint cache
+        uses: actions/cache/restore@v4
         id: golangci-lint-cache-restore
         with:
           path: cache-golangci-lint
@@ -32,9 +31,8 @@ jobs:
             ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-
             ${{ runner.os }}-
 
-      # Step 5: Restore Go mod cache (restore from main branch for PRs and pushes to main)
-      - name: Restore Go mod cache
-        uses: actions/cache@v3
+      - name: restore go mod cache
+        uses: actions/cache/restore@v4
         id: go-mod-cache-restore
         with:
           path: go-pkg-mod
@@ -43,9 +41,8 @@ jobs:
             ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-
             ${{ runner.os }}-go-mod-
 
-      # Step 6: Restore Go build cache (restore from main branch for PRs and pushes to main)
-      - name: Restore Go build cache
-        uses: actions/cache@v3
+      - name: restore go build cache
+        uses: actions/cache/restore@v4
         id: go-build-cache-restore
         with:
           path: cache-go-build
@@ -54,8 +51,7 @@ jobs:
             ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-
             ${{ runner.os }}-go-build-
 
-      # Step 7: Inject cache into Docker build
-      - name: Inject cache into Docker
+      - name: inject cache into docker
         uses: reproducible-containers/buildkit-cache-dance@v3.1.0
         with:
           cache-map: |
@@ -66,52 +62,43 @@ jobs:
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
-      # Docker login
-      - name: Docker login
+      - name: docker login
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      # Prepare build step
-      - name: Prepare build
+      - name: prepare
         run: docker buildx build -f Dockerfile.build --target prepare --cache-from=type=gha --cache-to=type=gha,mode=max .
 
-      # Sanity check build step
-      - name: Sanity check build
+      - name: sanity-check
         run: docker buildx build -f Dockerfile.build --target sanity-check --cache-from=type=gha --cache-to=type=gha,mode=max .
 
-      # Final build step
-      - name: Final build
+      - name: build
         run: docker buildx build -f Dockerfile.build --target build --cache-from=type=gha --cache-to=type=gha,mode=max .
 
-      # Step 13: Save cache for Go build, Go mod, and golangci-lint (only for push to main)
-      # Save Golangci-lint cache only on push to main
-      - name: Save Golangci-lint cache
-        uses: actions/cache@v3
+      - name: save golangci-lint cache
+        uses: actions/cache/save@v4
         with:
           path: cache-golangci-lint
           key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-${{ github.sha }}
         if: github.ref == 'refs/heads/main'
 
-      # Save Go mod cache only on push to main
-      - name: Save Go mod cache
-        uses: actions/cache@v3
+      - name: save go mod cache
+        uses: actions/cache/save@v4
         with:
           path: go-pkg-mod
           key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-${{ github.sha }}
         if: github.ref == 'refs/heads/main'
 
-      # Save Go build cache only on push to main
-      - name: Save Go build cache
-        uses: actions/cache@v3
+      - name: save go build cache
+        uses: actions/cache/save@v4
         with:
           path: cache-go-build
           key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-${{ github.sha }}
         if: github.ref == 'refs/heads/main'
 
-      # Release step (push to DockerHub) - Only on push to main
-      - name: Release
+      - name: release
         if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5
         with:
