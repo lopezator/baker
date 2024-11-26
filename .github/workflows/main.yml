@@ -26,7 +26,7 @@ jobs:
         id: golangci-lint-cache-restore
         with:
           path: cache-golangci-lint
-          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main  # Always restore from main cache
+          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main
           restore-keys: |
             ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-
             ${{ runner.os }}-
@@ -36,7 +36,7 @@ jobs:
         id: go-mod-cache-restore
         with:
           path: go-pkg-mod
-          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main  # Always restore from main cache
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main
           restore-keys: |
             ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-
             ${{ runner.os }}-go-mod-
@@ -46,7 +46,7 @@ jobs:
         id: go-build-cache-restore
         with:
           path: cache-go-build
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main  # Always restore from main cache
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main
           restore-keys: |
             ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-
             ${{ runner.os }}-go-build-
@@ -80,21 +80,21 @@ jobs:
       - name: save golangci-lint cache
         uses: actions/cache/save@v4
         with:
-          path: cache-golangci-lint
+          path: /root/.cache/golangci-lint
           key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-${{ github.sha }}
         if: github.ref == 'refs/heads/main'
 
       - name: save go mod cache
         uses: actions/cache/save@v4
         with:
-          path: go-pkg-mod
+          path: /go/pkg/mod
           key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-${{ github.sha }}
         if: github.ref == 'refs/heads/main'
 
       - name: save go build cache
         uses: actions/cache/save@v4
         with:
-          path: cache-go-build
+          path: /root/.cache/go-build
           key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-${{ github.sha }}
         if: github.ref == 'refs/heads/main'
 
@@ -106,7 +106,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           target: runtime
-          file: Dockerfile
+          file: build/container/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
