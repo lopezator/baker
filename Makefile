@@ -1,14 +1,23 @@
-PACKAGE     =  github.com/lopezator/cache-test
-PKG         ?= ./...
-APP         ?= cache-test
-BUILD_TAGS  ?= netgo,timetzdata
+SHELL    ?= /bin/bash
+NAME     =  $(shell echo $(PACKAGE) | rev | cut -d/ -f1 | rev)
 PLATFORM ?= linux darwin windows
 PREFIX   ?= docker.io/lopezator/cache-test
-DOCKER   =  $(shell command -v docker 2>/dev/null)
+DOCKER   ?= docker
 
 COMMIT_SHORT     ?= $(shell git rev-parse --verify --short HEAD)
 VERSION          ?= v0.0.0-sha.$(COMMIT_SHORT)
 VERSION_NOPREFIX ?= $(shell echo $(VERSION) | sed -e 's/^[[v]]*//')
+
+PACKAGE    =  github.com/lopezator/cache-test
+PKG        ?= ./...
+APP        ?= cache-test
+BUILD_TAGS ?= netgo,timetzdata
+
+
+.PHONY: prepare
+prepare:
+	@echo "Running mod download..."
+	@go mod download
 
 .PHONY: build
 build: go-build docker-build
@@ -35,20 +44,23 @@ go-build:
 
 .PHONY: docker-build
 docker-build:
+	@set -x
 	@echo "Building docker image..."
 	@if [ -z "$(PREFIX)" ]; then \
 		echo "You must define the mandatory PREFIX variable"; \
-		exit 1; \
+	exit 1; \
 	fi
 	@for app in $(APP) ; do \
 		cp bin/$$app-$(VERSION_NOPREFIX)-linux-amd64 build/container/$$app-linux-amd64; \
 		chmod 0755 build/container/$$app-linux-amd64; \
 	done; \
 	"$(DOCKER)" build \
-		-f build/container/Dockerfile \
-		-t $(PREFIX)/$(NAME):$(VERSION) \
+	-f build/container/Dockerfile \
+	-t $(PREFIX)/$(NAME):$(VERSION) \
 	build/container/
 
 .PHONY: sanity-check
 sanity-check:
+	ls -la ~
+	ls -la ~/.cache/golangci-lint
 	golangci-lint run $(PKG) --timeout 30m -v
