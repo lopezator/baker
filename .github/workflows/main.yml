@@ -26,21 +26,21 @@ jobs:
         id: golangci-lint-cache-restore
         with:
           path: cache-golangci-lint
-          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main
+          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main1
 
       - name: go mod cache
         uses: actions/cache@v4
         id: go-mod-cache-restore
         with:
           path: go-pkg-mod
-          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main1
 
       - name: go build cache
         uses: actions/cache@v4
         id: go-build-cache-restore
         with:
           path: cache-go-build
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main1
 
       - name: inject cache into docker
         uses: reproducible-containers/buildkit-cache-dance@v3.1.2
