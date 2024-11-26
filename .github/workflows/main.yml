@@ -27,9 +27,6 @@ jobs:
         with:
           path: cache-golangci-lint
           key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main
-          restore-keys: |
-            ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-
-            ${{ runner.os }}-
 
       - name: go mod cache
         uses: actions/cache@v4
@@ -37,9 +34,6 @@ jobs:
         with:
           path: go-pkg-mod
           key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main
-          restore-keys: |
-            ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-
-            ${{ runner.os }}-go-mod-
 
       - name: go build cache
         uses: actions/cache@v4
@@ -47,9 +41,6 @@ jobs:
         with:
           path: cache-go-build
           key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main
-          restore-keys: |
-            ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-
-            ${{ runner.os }}-go-build-
 
       - name: inject cache into docker
         uses: reproducible-containers/buildkit-cache-dance@v3.1.2
