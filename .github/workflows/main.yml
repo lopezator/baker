@@ -26,7 +26,7 @@ jobs:
         id: golangci-lint-cache-restore
         with:
           path: cache-golangci-lint
-          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main
+          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main2
           restore-keys: |
             ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-
             ${{ runner.os }}-
@@ -36,7 +36,7 @@ jobs:
         id: go-mod-cache-restore
         with:
           path: go-pkg-mod
-          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main2
           restore-keys: |
             ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-
             ${{ runner.os }}-go-mod-
@@ -46,7 +46,7 @@ jobs:
         id: go-build-cache-restore
         with:
           path: cache-go-build
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main2
           restore-keys: |
             ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-
             ${{ runner.os }}-go-build-
