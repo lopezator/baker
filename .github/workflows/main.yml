@@ -12,33 +12,64 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      CACHE: invalidate-cache-15
+      CACHE: invalidate-cache-18
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: Build
+          images: cache-test:build
 
-      - name: Cache
+      - name: docker cache
         uses: actions/cache@v3
-        id: cache
         with:
-          path: |
-            cache-golangci-lint
-            cache-go-build
-            go-pkg-mod
-          key: cache-${{ hashFiles('.github/workflows/main.yml') }}
+          path: cache-tmp-buildx-cache
+          key: ${{ runner.os }}-docker-${{ hashFiles('Dockerfile.build') }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-docker-${{ hashFiles('Dockerfile.build') }}-refs/heads/main
+            ${{ runner.os }}-docker-${{ hashFiles('Dockerfile.build') }}-
+            ${{ runner.os }}-docker-
+
+      - name: golangci-lint cache
+        uses: actions/cache@v3
+        with:
+          path: cache-golangci-lint
+          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-refs/heads/main
+            ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-
+            ${{ runner.os }}-
+
+      - name: go mod cache
+        uses: actions/cache@v3
+        with:
+          path: go-pkg-mod
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-refs/heads/main
+            ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-
+            ${{ runner.os }}-go-mod-
+
+      - name: go build cache
+        uses: actions/cache@v3
+        with:
+          path: cache-go-build
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-refs/heads/main
+            ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-
+            ${{ runner.os }}-go-build-
 
       - name: inject cache into docker
         uses: reproducible-containers/buildkit-cache-dance@v3.1.0
         with:
           cache-map: |
             {
-              "cache-golangci-lint": "~/.cache/golangci-lint",
-              "cache-go-build": "~/.cache/go-build",
-              "go-pkg-mod": "/go/pkg/mod"
+              "tmp-buildx-cache": "/tmp/.buildx-cache",
+              "cache-golangci-lint": "/root/.cache/golangci-lint",
+              "go-pkg-mod": "/go/pkg/mod",
+              "cache-go-build": "/root/.cache/go-build"
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
@@ -49,12 +80,23 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: prepare
-        run: |
-          docker buildx build --target prepare -t cache-test:build -f Dockerfile.build --cache-from=type=gha --cache-to=type=gha,mode=max .
+        run: docker buildx build -f Dockerfile.build --target prepare -t cache-test:build --cache-from=type=gha --cache-to=type=gha,mode=max .
 
       - name: sanity-check
-        run: |
-          docker buildx build --target sanity-check -t cache-test:build -f Dockerfile.build --cache-from=type=gha --cache-to=type=gha,mode=max .
+        run: docker buildx build -f Dockerfile.build --target sanity-check -t cache-test:build --cache-from=type=gha --cache-to=type=gha,mode=max .
 
       - name: build
-        run: docker buildx build --target build -t cache-test:build -f Dockerfile.build --cache-from=type=gha --cache-to=type=gha,mode=max .
+        run: docker buildx build -f Dockerfile.build --target build -t cache-test:build --cache-from=type=gha --cache-to=type=gha,mode=max .
+
+      - name: release
+        if: github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          target: runtime
+          file: Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

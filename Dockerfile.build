@@ -1,35 +1,51 @@
-# Base stage for dependencies and tools
+# Base stage for dependencies and tools.
 FROM golang:1.23.2-bullseye AS base
 
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
-    PKGPATH=github.com/lopezator/cache-test
+# Package path.
+ENV PKGPATH=github.com/lopezator/cache-test
 
-# Install golangci-lint
+# Install golangci-lint.
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v1.61.0
 
-# copy current workspace
+# copy current workspace.
 WORKDIR ${GOPATH}/src/${PKGPATH}
 COPY . .
 
-# Prepare stage: Cache go modules
+# compose target, just for docker compose local testing (you don't need this if you use a base image that has docker installed).
+FROM base AS compose
+
+# Install docker.
+RUN install -m 0755 -d /etc/apt/keyrings \
+&& curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+&& chmod a+r /etc/apt/keyrings/docker.gpg \
+&& echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  tee /etc/apt/sources.list.d/docker.list > /dev/null \
+&& apt-get update \
+&& apt-get install -y --no-install-recommends docker-ce=5:24.0.6-1~debian.11~bullseye \
+docker-ce-cli=5:24.0.6-1~debian.11~bullseye \
+containerd.io \
+docker-buildx-plugin \
+docker-compose-plugin \
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/*
+
+# Prepare stage: Cache go modules.
 FROM base AS prepare
-RUN --mount=type=cache,target=/go/pkg/mod \
+RUN --mount=type=cache,target=/tmp/.buildx-cache \
+    --mount=type=cache,target=/go/pkg/mod \
     make prepare
 
-# Lint stage: Cache golangci-lint
+# Lint stage: Cache golangci-lint.
 FROM prepare AS sanity-check
-RUN --mount=type=cache,target=~/.cache/golangci-lint \
-    --mount=type=cache,target=/go/pkg/mod \
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/root/.cache/golangci-lint \
     make sanity-check
 
-# Build stage: Cache Go build artifacts
+# Build stage: Cache Go build artifacts.
 FROM prepare AS build
-RUN --mount=type=cache,target=~/.cache/go-build \
-    --mount=type=cache,target=/go/pkg/mod \
-    make go-build
-
-# Final runtime image
-FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS runtime
-COPY --from=build build/container/cache-test-linux-amd64 /usr/local/bin/cache-test
-CMD ["cache-test"]
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    make go-build \
