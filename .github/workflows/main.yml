@@ -22,7 +22,7 @@ jobs:
           images: cache-test
 
       - name: restore golangci-lint cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache@v4
         id: golangci-lint-cache-restore
         with:
           path: cache-golangci-lint
@@ -32,7 +32,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: restore go mod cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache@v4
         id: go-mod-cache-restore
         with:
           path: go-pkg-mod
@@ -42,7 +42,7 @@ jobs:
             ${{ runner.os }}-go-mod-
 
       - name: restore go build cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache@v4
         id: go-build-cache-restore
         with:
           path: cache-go-build
@@ -76,27 +76,6 @@ jobs:
 
       - name: build
         run: docker buildx build -f Dockerfile.build --target build --cache-from=type=gha --cache-to=type=gha,mode=max .
-
-      - name: save golangci-lint cache
-        uses: actions/cache@v3
-        with:
-          path: cache-golangci-lint
-          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main
-        if: github.ref == 'refs/heads/main'
-
-      - name: save go mod cache
-        uses: actions/cache@v3
-        with:
-          path: go-pkg-mod
-          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main
-        if: github.ref == 'refs/heads/main'
-
-      - name: save go build cache
-        uses: actions/cache@v3
-        with:
-          path: cache-go-build
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main
-        if: github.ref == 'refs/heads/main'
 
       - name: release
         if: github.ref == 'refs/heads/main'
