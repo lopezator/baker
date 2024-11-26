@@ -21,74 +21,97 @@ jobs:
         with:
           images: cache-test:build
 
-      - name: docker cache
+      # Step 4: Restore Golangci-lint cache (restore from main branch for PRs and pushes to main)
+      - name: Restore Golangci-lint cache
         uses: actions/cache@v3
-        with:
-          path: cache-tmp-buildx-cache
-          key: ${{ runner.os }}-docker-${{ hashFiles('Dockerfile.build') }}-${{ github.ref }}
-          restore-keys: |
-            ${{ runner.os }}-docker-${{ hashFiles('Dockerfile.build') }}-refs/heads/main
-            ${{ runner.os }}-docker-${{ hashFiles('Dockerfile.build') }}-
-            ${{ runner.os }}-docker-
-
-      - name: golangci-lint cache
-        uses: actions/cache@v3
+        id: golangci-lint-cache-restore
         with:
           path: cache-golangci-lint
-          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-${{ github.ref }}
+          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main  # Always restore from main cache
           restore-keys: |
-            ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-refs/heads/main
             ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-
             ${{ runner.os }}-
 
-      - name: go mod cache
+      # Step 5: Restore Go mod cache (restore from main branch for PRs and pushes to main)
+      - name: Restore Go mod cache
         uses: actions/cache@v3
+        id: go-mod-cache-restore
         with:
           path: go-pkg-mod
-          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-${{ github.ref }}
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main  # Always restore from main cache
           restore-keys: |
-            ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-refs/heads/main
             ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-
             ${{ runner.os }}-go-mod-
 
-      - name: go build cache
+      # Step 6: Restore Go build cache (restore from main branch for PRs and pushes to main)
+      - name: Restore Go build cache
         uses: actions/cache@v3
+        id: go-build-cache-restore
         with:
           path: cache-go-build
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-${{ github.ref }}
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main  # Always restore from main cache
           restore-keys: |
-            ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-refs/heads/main
             ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-
             ${{ runner.os }}-go-build-
 
-      - name: inject cache into docker
+      # Step 7: Inject cache into Docker build
+      - name: Inject cache into Docker
         uses: reproducible-containers/buildkit-cache-dance@v3.1.0
         with:
           cache-map: |
             {
-              "tmp-buildx-cache": "/tmp/.buildx-cache",
               "cache-golangci-lint": "/root/.cache/golangci-lint",
               "go-pkg-mod": "/go/pkg/mod",
               "cache-go-build": "/root/.cache/go-build"
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
-      - name: docker-login
+      # Docker login
+      - name: Docker login
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: prepare
-        run: docker buildx build -f Dockerfile.build --target prepare -t cache-test:build --cache-from=type=gha --cache-to=type=gha,mode=max .
+      # Prepare build step
+      - name: Prepare build
+        run: docker buildx build -f Dockerfile.build --target prepare --cache-from=type=gha --cache-to=type=gha,mode=max .
 
-      - name: sanity-check
-        run: docker buildx build -f Dockerfile.build --target sanity-check -t cache-test:build --cache-from=type=gha --cache-to=type=gha,mode=max .
+      # Sanity check build step
+      - name: Sanity check build
+        run: docker buildx build -f Dockerfile.build --target sanity-check --cache-from=type=gha --cache-to=type=gha,mode=max .
 
-      - name: build
-        run: docker buildx build -f Dockerfile.build --target build -t cache-test:build --cache-from=type=gha --cache-to=type=gha,mode=max .
+      # Final build step
+      - name: Final build
+        run: docker buildx build -f Dockerfile.build --target build --cache-from=type=gha --cache-to=type=gha,mode=max .
 
-      - name: release
+      # Step 13: Save cache for Go build, Go mod, and golangci-lint (only for push to main)
+      # Save Golangci-lint cache only on push to main
+      - name: Save Golangci-lint cache
+        uses: actions/cache@v3
+        with:
+          path: cache-golangci-lint
+          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-${{ github.sha }}
+        if: github.ref == 'refs/heads/main'
+
+      # Save Go mod cache only on push to main
+      - name: Save Go mod cache
+        uses: actions/cache@v3
+        with:
+          path: go-pkg-mod
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-${{ github.sha }}
+        if: github.ref == 'refs/heads/main'
+
+      # Save Go build cache only on push to main
+      - name: Save Go build cache
+        uses: actions/cache@v3
+        with:
+          path: cache-go-build
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-${{ github.sha }}
+        if: github.ref == 'refs/heads/main'
+
+      # Release step (push to DockerHub) - Only on push to main
+      - name: Release
         if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5
         with:
