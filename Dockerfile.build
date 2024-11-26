@@ -48,7 +48,3 @@ FROM prepare AS build
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     make go-build
-
-# Fix the permissions
-RUN chown -R $(id -u):$(id -g) go-pkg-mod \
-    && chmod -R u+rw go-pkg-mod
