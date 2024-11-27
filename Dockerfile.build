@@ -7,13 +7,6 @@ ENV PKGPATH=github.com/lopezator/cache-test
 # Install golangci-lint.
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v1.61.0
 
-# copy current workspace.
-WORKDIR ${GOPATH}/src/${PKGPATH}
-COPY . .
-
-# compose target, just for docker compose local testing (you don't need this if you use a base image that has docker installed).
-FROM base AS compose
-
 # Install docker.
 RUN install -m 0755 -d /etc/apt/keyrings \
 && curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
@@ -30,6 +23,10 @@ docker-buildx-plugin \
 docker-compose-plugin \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
+
+# copy current workspace.
+WORKDIR ${GOPATH}/src/${PKGPATH}
+COPY . .
 
 # Prepare stage: Cache go modules.
 FROM base AS prepare

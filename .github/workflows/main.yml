@@ -26,21 +26,21 @@ jobs:
         id: golangci-lint-cache-restore
         with:
           path: cache-golangci-lint
-          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main1
+          key: ${{ runner.os }}-${{ hashFiles('.go-builder/.golangci.yml') }}-main
 
       - name: go mod cache
         uses: actions/cache@v4
         id: go-mod-cache-restore
         with:
           path: go-pkg-mod
-          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main1
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main
 
       - name: go build cache
         uses: actions/cache@v4
         id: go-build-cache-restore
         with:
           path: cache-go-build
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main1
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main
 
       - name: inject cache into docker
         uses: reproducible-containers/buildkit-cache-dance@v3.1.2
@@ -59,18 +59,18 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
+      - name: base
+        run: docker buildx bake --file docker-compose-cache.json base
+
       - name: prepare
-        run: docker buildx build -f Dockerfile.build --target prepare --cache-from=type=gha --cache-to=type=gha,mode=max .
+        run: docker buildx bake --file docker-compose-cache.json prepare
 
       - name: sanity-check
-        run: docker buildx build -f Dockerfile.build --target sanity-check --cache-from=type=gha --cache-to=type=gha,mode=max .
+        run: docker buildx bake --file docker-compose-cache.json sanity-check
 
       - name: build
-        run: docker buildx build -f Dockerfile.build --target build --cache-from=type=gha --cache-to=type=gha,mode=max .
+        run: docker buildx bake --file docker-compose-cache.json build
 
-#      - name: copy binary
-#        run: docker cp $(docker create cache-test-build):/usr/local/bin/cache-test build/container/cache-test-linux-amd64
-#
-#      - name: release
-#        if: github.ref == 'refs/heads/main'
-#        run: make release
+#     - name: release
+#       if: github.ref == 'refs/heads/main'
+#       run: make release
