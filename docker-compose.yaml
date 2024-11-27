@@ -12,7 +12,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.build
-      target: compose
     image: cache-test:build
     depends_on:
       - docker-in-docker

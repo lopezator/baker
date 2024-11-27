@@ -61,6 +61,14 @@
       "output": [
         "type=docker"
       ]
+    },
+    "release": {
+      "context": ".",
+      "dockerfile": "Dockerfile.build",
+      "target": "release",
+      "output": [
+        "type=docker"
+      ]
     }
   }
 }
