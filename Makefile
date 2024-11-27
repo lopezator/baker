@@ -15,6 +15,14 @@ BUILD_TAGS ?= netgo,timetzdata
 
 include .go-builder/Makefile
 
+.PHONY: print-vars
+print-vars:
+	@echo "APP=$(APP)" >> $GITHUB_ENV
+	@echo "PREFIX=$(PREFIX)" >> $GITHUB_ENV
+	@echo "NAME=$(NAME)" >> $GITHUB_ENV
+	@echo "VERSION_NOPREFIX=$(VERSION_NOPREFIX)" >> $GITHUB_ENV
+	@echo "VERSION=$(VERSION)" >> $GITHUB_ENV
+
 .PHONY: prepare
 prepare:
 	@echo "Running mod download..."
@@ -22,12 +30,6 @@ prepare:
 
 .PHONY: sanity-check
 sanity-check: $(sanity_check_targets)
-
-.PHONY: build
-build: $(build_targets)
-
-.PHONY: release
-release: $(release_targets)
 
 .PHONY: go-build
 go-build:

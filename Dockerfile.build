@@ -1,11 +1,6 @@
 # Base stage for dependencies and tools.
 FROM golang:1.23.2-bullseye AS base
 
-ARG app
-ARG VERSION_NOPREFIX
-RUN echo "App: ${app}, Version: ${VERSION_NOPREFIX}"
-RUN exit 0
-
 # Package path.
 ENV PKGPATH=github.com/lopezator/cache-test
 
@@ -29,12 +24,16 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     make sanity-check
 
 # Build stage: Cache Go build artifacts.
-FROM prepare AS build
+FROM sanity-check AS build
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    make build
+    make go-build
+
+# Build stage: get latest binary.
+RUN LATEST_BIN=$(ls -t /go/src/github.com/lopezator/cache-test/bin/*linux-amd64 | head -n 1) && \
+    chmod 0755 ${LATEST_BIN} && \
+    cp ${LATEST_BIN} /usr/local/bin/cache-test
 
 # Runtime stage: Copy binary from build stage.
 FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS runtime
-COPY --from=build /go/src/github.com/lopezator/cache-test/bin/${app}-${VERSION_NOPREFIX}-linux-amd64 /usr/local/bin/cache-test
-RUN chmod 0755 build/container/${app}-linux-amd64
+CMD ["cache-test"]

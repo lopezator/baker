@@ -72,6 +72,9 @@
       "cache-to": [
         "type=gha,mode=max"
       ],
+      "tags": [
+        "docker.io/lopezator/cache-test:latest"
+      ],
       "output": [
         "type=docker"
       ]
