@@ -1,16 +1,5 @@
 {
   "target": {
-    "docker-in-docker": {
-      "cache-from": [
-        "type=registry,ref=docker:dind"
-      ],
-      "cache-to": [
-        "type=registry,ref=docker:dind,mode=max"
-      ],
-      "output": [
-        "type=docker"
-      ]
-    },
     "base": {
       "context": ".",
       "dockerfile": "Dockerfile.build",
