@@ -59,9 +59,6 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: base
-        run: docker buildx bake --file docker-compose-cache.json base
-
       - name: prepare
         run: docker buildx bake --file docker-compose-cache.json prepare
 
@@ -69,8 +66,13 @@ jobs:
         run: docker buildx bake --file docker-compose-cache.json sanity-check
 
       - name: build
-        run: docker buildx bake --file docker-compose-cache.json build
+        run: |
+          make APP=${{ env.APP }} VERSION_NOPREFIX=${{ env.VERSION_NOPREFIX }}
+          docker buildx bake --file docker-compose-cache.json build
 
       - name: release
         if: github.ref == 'refs/heads/main'
-        run: docker buildx bake --file docker-compose-cache.json release
+        run: |
+          docker buildx bake --file docker-compose-cache.json runtime
+          make PREFIX=${{ env.PREFIX }} NAME=${{ env.NAME }} VERSION=${{ env.VERSION }}
+          docker push ${{ env.PREFIX }}/${{ env.NAME }}:${{ env.VERSION }}

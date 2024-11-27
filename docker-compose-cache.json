@@ -1,5 +1,16 @@
 {
   "target": {
+    "docker-in-docker": {
+      "cache-from": [
+        "type=registry,ref=docker:dind"
+      ],
+      "cache-to": [
+        "type=registry,ref=docker:dind,mode=max"
+      ],
+      "output": [
+        "type=docker"
+      ]
+    },
     "base": {
       "context": ".",
       "dockerfile": "Dockerfile.build",
@@ -62,10 +73,16 @@
         "type=docker"
       ]
     },
-    "release": {
+    "runtime": {
       "context": ".",
       "dockerfile": "Dockerfile.build",
-      "target": "release",
+      "target": "runtime",
+      "cache-from": [
+        "type=gha"
+      ],
+      "cache-to": [
+        "type=gha,mode=max"
+      ],
       "output": [
         "type=docker"
       ]

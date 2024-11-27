@@ -1,11 +1,23 @@
 # Base stage for dependencies and tools.
 FROM golang:1.23.2-bullseye AS base
 
+ARG app
+ARG VERSION_NOPREFIX
+RUN echo "App: ${app}, Version: ${VERSION_NOPREFIX}"
+RUN exit 0
+
 # Package path.
 ENV PKGPATH=github.com/lopezator/cache-test
 
 # Install golangci-lint.
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v1.61.0
+
+# copy current workspace.
+WORKDIR ${GOPATH}/src/${PKGPATH}
+COPY . .
+
+# You don't need this if you are using a multi-stage build.
+FROM base AS compose
 
 # Install docker.
 RUN install -m 0755 -d /etc/apt/keyrings \
@@ -24,10 +36,6 @@ docker-compose-plugin \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
-# copy current workspace.
-WORKDIR ${GOPATH}/src/${PKGPATH}
-COPY . .
-
 # Prepare stage: Cache go modules.
 FROM base AS prepare
 RUN --mount=type=cache,target=/go/pkg/mod \
@@ -44,8 +52,9 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 FROM prepare AS build
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    make go-build
+    make build
 
-# Release stage: Copy binary from build stage.
-FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS release
-COPY --from=build /go/src/github.com/lopezator/cache-test/build/container/cache-test-linux-amd64 /usr/local/bin/cache-test
+# Runtime stage: Copy binary from build stage.
+FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS runtime
+COPY --from=build /go/src/github.com/lopezator/cache-test/bin/${app}-${VERSION_NOPREFIX}-linux-amd64 /usr/local/bin/cache-test
+RUN chmod 0755 build/container/${app}-linux-amd64
