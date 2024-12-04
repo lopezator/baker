@@ -3,7 +3,6 @@ group "default" {
 }
 
 target "prepare" {
-  context    = "."
   dockerfile = "Dockerfile.build"
   target     = "prepare"
 
@@ -13,8 +12,22 @@ target "prepare" {
   ]
 
   cache-to = [
-    "type=registry,ref=lopezator/cache-test:build,mode=max",
     "type=gha,scope=/go/pkg/mod,mode=max"
+  ]
+}
+
+target "sanity-check" {
+  dockerfile = "Dockerfile.build"
+  target     = "sanity-check"
+  depends    = ["prepare"]
+
+  cache-from = [
+    "type=gha,scope=/go/pkg/mod",
+    "type=gha,scope=/root/.cache/golangci-lint"
+  ]
+
+  cache-to = [
+    "type=gha,scope=/root/.cache/golangci-lint,mode=max"
   ]
 
   output = [
@@ -22,29 +35,7 @@ target "prepare" {
   ]
 }
 
-target "sanity-check" {
-  context    = "."
-  dockerfile = "Dockerfile.build"
-  target     = "sanity-check"
-  depends   = ["prepare"]
-
-  cache-from = [
-    "type=gha,scope=/go/pkg/mod",
-    "type=gha,scope=/root/.cache/go-build",
-    "type=gha,scope=/root/.cache/golangci-lint"
-  ]
-
-  cache-to = [
-    "type=gha,scope=/go/pkg/mod,mode=max",
-    "type=gha,scope=/root/.cache/go-build,mode=max",
-    "type=gha,scope=/root/.cache/golangci-lint,mode=max"
-  ]
-
-  output = ["type=cacheonly"]
-}
-
 target "build" {
-  context    = "."
   dockerfile = "Dockerfile.build"
   target     = "build"
   depends    = ["prepare"]
@@ -52,11 +43,9 @@ target "build" {
   cache-from = [
     "type=gha,scope=/go/pkg/mod",
     "type=gha,scope=/root/.cache/go-build",
-    "type=registry,ref=lopezator/cache-test:build"
   ]
 
   cache-to = [
-    "type=gha,scope=/go/pkg/mod,mode=max",
     "type=gha,scope=/root/.cache/go-build,mode=max"
   ]
 
@@ -65,8 +54,7 @@ target "build" {
   ]
 
   output = [
-    "type=docker",
-    "type=cacheonly"
+    "type=docker"
   ]
 }
 
@@ -76,19 +64,11 @@ target "release" {
   target     = "release"
   depends    = ["check-build"]
 
-  cache-from = [
-    "type=gha"
-  ]
-
-  cache-to = [
-    "type=gha,mode=max"
-  ]
-
   tags = [
     "docker.io/lopezator/cache-test:latest"
   ]
 
   output = [
-    "type=docker"
+    "type=registry"
   ]
 }
