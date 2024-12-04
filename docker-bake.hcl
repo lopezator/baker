@@ -8,13 +8,12 @@ target "prepare" {
   target     = "prepare"
 
   cache-from = [
-    "type=gha",
-    "type=registry,ref=lopezator/cache-test:latest",
+    "type=registry,ref=lopezator/cache-test:build",
     "type=gha,scope=/go/pkg/mod"
   ]
 
   cache-to = [
-    "type=registry,ref=lopezator/cache-test:latest,mode=max",
+    "type=registry,ref=lopezator/cache-test:build,mode=max",
     "type=gha,scope=/go/pkg/mod,mode=max"
   ]
 
@@ -30,7 +29,6 @@ target "sanity-check" {
   depends   = ["prepare"]
 
   cache-from = [
-    "type=gha",
     "type=gha,scope=/go/pkg/mod",
     "type=gha,scope=/root/.cache/go-build",
     "type=gha,scope=/root/.cache/golangci-lint"
@@ -54,13 +52,11 @@ target "build" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=gha",
     "type=gha,scope=/go/pkg/mod",
     "type=gha,scope=/root/.cache/go-build"
   ]
 
   cache-to = [
-    "type=gha",
     "type=gha,scope=/go/pkg/mod,mode=max",
     "type=gha,scope=/root/.cache/go-build,mode=max"
   ]
