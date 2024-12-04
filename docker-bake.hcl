@@ -53,7 +53,8 @@ target "build" {
 
   cache-from = [
     "type=gha,scope=/go/pkg/mod",
-    "type=gha,scope=/root/.cache/go-build"
+    "type=gha,scope=/root/.cache/go-build",
+    "type=registry,ref=lopezator/cache-test:build"
   ]
 
   cache-to = [
