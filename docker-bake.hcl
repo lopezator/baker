@@ -40,9 +40,7 @@ target "sanity-check" {
     "type=gha,scope=/root/.cache/golangci-lint,mode=max"
   ]
 
-  output = [
-    "type=docker"
-  ]
+  output = ["type=cacheonly"]
 }
 
 target "build" {
@@ -67,7 +65,8 @@ target "build" {
   ]
 
   output = [
-    "type=docker"
+    "type=docker",
+    "type=cacheonly"
   ]
 }
 
