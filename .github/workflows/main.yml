@@ -59,7 +59,15 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: build and push
+      - name: build image
         uses: docker/bake-action@v5
         with:
+          targets: build
           push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: release image
+        if: github.ref == 'refs/heads/main'
+        uses: docker/bake-action@v5
+        with:
+          targets: release
+          push: true
