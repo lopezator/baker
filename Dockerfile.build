@@ -1,38 +1,33 @@
 # Base stage for dependencies and tools.
 FROM golang:1.23.2-bullseye AS base
 
-# Package path.
-ENV PKGPATH=github.com/lopezator/cache-test
-
 # Install golangci-lint.
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v1.61.0
 
-# copy current workspace.
-WORKDIR ${GOPATH}/src/${PKGPATH}
-COPY . .
+# Copy source code.
+WORKDIR /go/src/github.com/lopezator/cache-test
 
 # Prepare stage: Cache go modules.
 FROM base AS prepare
-RUN --mount=type=cache,target=/go/pkg/mod \
-    make prepare
+RUN --mount=target=. \
+	--mount=type=cache,target=/go/pkg/mod \
+	make prepare
 
 # Lint stage: Cache golangci-lint.
 FROM prepare AS sanity-check
-RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
+RUN --mount=target=. \
+    --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/golangci-lint \
     make sanity-check
 
 # Build stage: Cache Go build artifacts.
 FROM sanity-check AS build
-RUN --mount=type=cache,target=/go/pkg/mod \
+RUN --mount=target=. \
+    --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    make go-build
-# Get latest binary and copy to the $PATH.
-RUN LATEST_BIN=$(ls -t /go/src/github.com/lopezator/cache-test/bin/*linux-amd64 | head -n 1) && \
-    chmod 0755 ${LATEST_BIN} && \
-    cp ${LATEST_BIN} /usr/local/bin/cache-test
+	make go-build
 
 # Release stage: Copy binary from build stage.
 FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS release
+COPY --from=build "/usr/local/bin/cache-test" "/usr/local/bin/cache-test"
 CMD ["cache-test"]
