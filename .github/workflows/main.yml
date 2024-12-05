@@ -58,10 +58,11 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: build image
+        if: github.ref == 'refs/heads/main'
         uses: docker/bake-action@v5
         with:
           targets: build
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
 
       - name: release image
         if: github.ref == 'refs/heads/main'
