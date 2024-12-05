@@ -7,12 +7,15 @@ target "prepare" {
   target     = "prepare"
 
   cache-from = [
-    "type=registry,ref=lopezator/cache-test:build",
-    "type=gha,scope=/go/pkg/mod"
+    "type=registry,ref=lopezator/cache-test:build"
   ]
 
   cache-to = [
-    "type=gha,scope=/go/pkg/mod,mode=max"
+    "type=registry,ref=lopezator/cache-test:build,mode=max"
+  ]
+
+  output = [
+    "type=docker"
   ]
 }
 
@@ -22,12 +25,11 @@ target "sanity-check" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=gha,scope=/go/pkg/mod",
-    "type=gha,scope=/root/.cache/golangci-lint"
+    "type=registry,ref=lopezator/cache-test:build"
   ]
 
   cache-to = [
-    "type=gha,scope=/root/.cache/golangci-lint,mode=max"
+    "type=registry,ref=lopezator/cache-test:build,mode=max"
   ]
 
   output = [
@@ -41,12 +43,11 @@ target "build" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=gha,scope=/go/pkg/mod",
-    "type=gha,scope=/root/.cache/go-build",
+    "type=registry,ref=lopezator/cache-test:build"
   ]
 
   cache-to = [
-    "type=gha,scope=/root/.cache/go-build,mode=max"
+    "type=registry,ref=lopezator/cache-test:build,mode=max"
   ]
 
   tags = [
@@ -54,7 +55,7 @@ target "build" {
   ]
 
   output = [
-    "type=docker"
+    "type=registry"
   ]
 }
 
@@ -63,6 +64,14 @@ target "release" {
   dockerfile = "Dockerfile.build"
   target     = "release"
   depends    = ["check-build"]
+
+  cache-from = [
+    "type=registry,ref=lopezator/cache-test:build"
+  ]
+
+  cache-to = [
+    "type=registry,ref=lopezator/cache-test:build,mode=max"
+  ]
 
   tags = [
     "docker.io/lopezator/cache-test:latest"
