@@ -14,6 +14,10 @@ target "prepare" {
   cache-to = [
     "type=gha,scope=/go/pkg/mod,mode=max"
   ]
+
+  output = [
+    "type=docker"
+  ]
 }
 
 target "sanity-check" {
@@ -74,6 +78,6 @@ target "release" {
   ]
 
   output = [
-    "type=registry"
+    "type=docker"
   ]
 }
