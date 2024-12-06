@@ -51,7 +51,7 @@ target "build" {
 
   cache-to = [
     "type=gha,scope=/root/.cache/go-build,mode=max",
-    "type=registry,ref=lopezator/cache-test:build,mode=max",
+    "type=inline,mode=max",
   ]
 
   tags = [

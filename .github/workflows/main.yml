@@ -58,14 +58,7 @@ jobs:
         uses: docker/bake-action@v5
         with:
           targets: build
-          push: false
-
-      - name: push build image
-        if: github.ref == 'refs/heads/main'
-        uses: docker/bake-action@v5
-        with:
-          targets: build
-          push: true
+          push: ${{ github.ref == 'refs/heads/main'}}
 
       - name: push release image
         if: github.ref == 'refs/heads/main'
