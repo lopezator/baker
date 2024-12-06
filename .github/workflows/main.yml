@@ -21,21 +21,18 @@ jobs:
 
       - name: golangci-lint cache
         uses: actions/cache@v4
-        id: golangci-lint-cache-restore
         with:
           path: cache-golangci-lint
           key: ${{ runner.os }}-golangci-lint-${{ hashFiles('.golangci.yml') }}-main
 
       - name: go mod cache
         uses: actions/cache@v4
-        id: go-mod-cache-restore
         with:
           path: go-pkg-mod
           key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main
 
       - name: go build cache
         uses: actions/cache@v4
-        id: go-build-cache-restore
         with:
           path: cache-go-build
           key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum', '**/go.mod') }}-main
@@ -61,9 +58,9 @@ jobs:
         uses: docker/bake-action@v5
         with:
           targets: build
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: ${{ github.ref == 'refs/heads/main'}}
 
-      - name: release image
+      - name: push release image
         if: github.ref == 'refs/heads/main'
         uses: docker/bake-action@v5
         with:

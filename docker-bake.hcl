@@ -14,6 +14,10 @@ target "prepare" {
   cache-to = [
     "type=gha,scope=/go/pkg/mod,mode=max"
   ]
+
+  output = [
+    "type=docker"
+  ]
 }
 
 target "sanity-check" {
@@ -47,7 +51,7 @@ target "build" {
 
   cache-to = [
     "type=gha,scope=/root/.cache/go-build,mode=max",
-    "type=registry,ref=lopezator/cache-test:build,mode=max",
+    "type=inline,mode=max",
   ]
 
   tags = [
@@ -74,6 +78,6 @@ target "release" {
   ]
 
   output = [
-    "type=registry"
+    "type=docker"
   ]
 }
