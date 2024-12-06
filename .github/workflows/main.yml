@@ -24,7 +24,7 @@ jobs:
         id: golangci-lint-cache-restore
         with:
           path: cache-golangci-lint
-          key: ${{ runner.os }}-${{ hashFiles('.golangci.yml') }}-main
+          key: ${{ runner.os }}-golangci-lint-${{ hashFiles('.golangci.yml') }}-main
 
       - name: restore go mod cache
         uses: actions/cache@v4

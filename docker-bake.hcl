@@ -46,7 +46,8 @@ target "build" {
   ]
 
   cache-to = [
-    "type=gha,scope=/root/.cache/go-build,mode=max"
+    "type=gha,scope=/root/.cache/go-build,mode=max",
+    "type=registry,ref=lopezator/cache-test:build,mode=max",
   ]
 
   tags = [
@@ -66,6 +67,10 @@ target "release" {
 
   tags = [
     "docker.io/lopezator/cache-test:latest"
+  ]
+
+  cache-to = [
+    "type=registry,ref=lopezator/cache-test:build,mode=max",
   ]
 
   output = [
