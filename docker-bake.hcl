@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["prepare", "sanity-check", "test", "build", "release"]
+  targets = ["prepare", "sanity-check", "test", "build"]
 }
 
 target "prepare" {
