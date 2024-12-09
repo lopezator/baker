@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["prepare", "sanity-check", "build"]
+  targets = ["prepare", "sanity-check", "test", "build"]
 }
 
 target "prepare" {
@@ -31,6 +31,21 @@ target "sanity-check" {
   ]
 }
 
+target "test" {
+  dockerfile = "Dockerfile.build"
+  target     = "test"
+  depends    = ["prepare"]
+
+  cache-from = [
+    "type=gha,scope=/go/pkg/mod",
+    "type=gha,scope=/root/.cache/go-build"
+  ]
+
+  cache-to = [
+    "type=gha,scope=/root/.cache/go-build,mode=max"
+  ]
+}
+
 target "build" {
   dockerfile = "Dockerfile.build"
   target     = "build"
@@ -38,12 +53,11 @@ target "build" {
 
   cache-from = [
     "type=gha,scope=/go/pkg/mod",
-    "type=gha,scope=/root/.cache/go-build",
+    "type=gha,scope=/root/.cache/go-build"
   ]
 
   cache-to = [
-    "type=gha,scope=/root/.cache/go-build,mode=max",
-    "type=inline,mode=max",
+    "type=gha,scope=/root/.cache/go-build,mode=max"
   ]
 
   tags = [
@@ -55,13 +69,13 @@ target "release" {
   context    = "."
   dockerfile = "Dockerfile.build"
   target     = "release"
-  depends    = ["check-build"]
+  depends    = ["build"]
 
   tags = [
     "docker.io/lopezator/cache-test:latest"
   ]
 
   cache-to = [
-    "type=registry,ref=lopezator/cache-test:build,mode=max",
+    "type=registry,ref=lopezator/cache-test:build,mode=max"
   ]
 }

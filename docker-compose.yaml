@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.build
-    image: cache-test:latest
+    image: cache-test:build
     depends_on:
       - docker-in-docker
     environment:

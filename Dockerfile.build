@@ -21,11 +21,18 @@ RUN --mount=target=. \
     make sanity-check
 
 # Build stage: Cache Go build artifacts.
-FROM sanity-check AS build
+FROM prepare AS build
 RUN --mount=target=. \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-	make go-build
+	make build
+
+# Test stage: Cache Go test artifacts.
+FROM prepare AS test
+RUN --mount=target=. \
+    --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+	make test
 
 # Release stage: Copy binary from build stage.
 FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS release
