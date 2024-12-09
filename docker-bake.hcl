@@ -63,6 +63,10 @@ target "build" {
   tags = [
     "docker.io/lopezator/cache-test:build"
   ]
+
+  output = [
+    "type=docker"
+  ]
 }
 
 target "release" {
@@ -77,5 +81,9 @@ target "release" {
 
   cache-to = [
     "type=registry,ref=lopezator/cache-test:build,mode=max"
+  ]
+
+  output = [
+    "type=registry"
   ]
 }
