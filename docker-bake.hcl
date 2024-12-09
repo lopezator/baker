@@ -3,7 +3,6 @@ group "default" {
 }
 
 target "prepare" {
-  dockerfile = "Dockerfile.build"
   target     = "prepare"
 
   cache-from = [
@@ -21,7 +20,6 @@ target "prepare" {
 }
 
 target "sanity-check" {
-  dockerfile = "Dockerfile.build"
   target     = "sanity-check"
   depends    = ["prepare"]
 
@@ -40,7 +38,6 @@ target "sanity-check" {
 }
 
 target "test" {
-  dockerfile = "Dockerfile.build"
   target     = "test"
   depends    = ["prepare"]
 
@@ -59,7 +56,6 @@ target "test" {
 }
 
 target "build" {
-  dockerfile = "Dockerfile.build"
   target     = "build"
   depends    = ["prepare"]
 
@@ -82,8 +78,6 @@ target "build" {
 }
 
 target "release" {
-  context    = "."
-  dockerfile = "Dockerfile.build"
   target     = "release"
   depends    = ["build"]
 

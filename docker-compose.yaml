@@ -9,9 +9,7 @@ services:
       - 2375
 
   cache-test:
-    build:
-      context: .
-      dockerfile: Dockerfile.build
+    build: .
     image: cache-test:build
     depends_on:
       - docker-in-docker
