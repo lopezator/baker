@@ -85,10 +85,6 @@ target "release" {
     "docker.io/lopezator/cache-test:latest"
   ]
 
-  cache-to = [
-    "type=registry,ref=lopezator/cache-test:build,mode=max"
-  ]
-
   output = [
     "type=registry"
   ]
