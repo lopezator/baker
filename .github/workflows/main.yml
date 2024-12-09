@@ -35,7 +35,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: cache-go-build
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum', '**/go.mod') }}-main
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main
 
       - name: inject cache into docker
         uses: reproducible-containers/buildkit-cache-dance@v3.1.2
