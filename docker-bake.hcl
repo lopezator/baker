@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["prepare", "sanity-check", "build"]
+  targets = ["prepare", "sanity-check", "build", "test"]
 }
 
 target "prepare" {
@@ -49,6 +49,22 @@ target "build" {
     "docker.io/lopezator/cache-test:build"
   ]
 }
+
+target "test" {
+  dockerfile = "Dockerfile.build"
+  target     = "test"
+  depends    = ["prepare"]
+
+  cache-from = [
+    "type=gha,scope=/go/pkg/mod",
+    "type=gha,scope=/root/.cache/go-build",
+  ]
+
+  cache-to = [
+    "type=gha,scope=/root/.cache/go-build,mode=max",
+  ]
+}
+
 
 target "release" {
   context    = "."
