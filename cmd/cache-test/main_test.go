@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestPingEndpoint tests the /ping endpoint.
 func TestPingEndpoint(t *testing.T) {
 	// Set Gin to Test Mode
 	gin.SetMode(gin.TestMode)
