@@ -27,7 +27,7 @@ RUN --mount=target=. \
     --mount=type=cache,target=/root/.cache/go-build \
 	make build
 
-# Build stage: Cache Go build artifacts.
+# Test stage: Cache Go test artifacts.
 FROM prepare AS test
 RUN --mount=target=. \
     --mount=type=cache,target=/go/pkg/mod \
