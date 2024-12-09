@@ -14,6 +14,10 @@ target "prepare" {
   cache-to = [
     "type=gha,scope=/go/pkg/mod,mode=max"
   ]
+
+  output = [
+    "type=cacheonly"
+  ]
 }
 
 target "sanity-check" {
@@ -29,6 +33,10 @@ target "sanity-check" {
   cache-to = [
     "type=gha,scope=/root/.cache/golangci-lint,mode=max"
   ]
+
+  output = [
+    "type=cacheonly"
+  ]
 }
 
 target "test" {
@@ -43,6 +51,10 @@ target "test" {
 
   cache-to = [
     "type=gha,scope=/root/.cache/go-build,mode=max"
+  ]
+
+  output = [
+    "type=cacheonly"
   ]
 }
 
@@ -63,6 +75,10 @@ target "build" {
   tags = [
     "docker.io/lopezator/cache-test:build"
   ]
+
+  output = [
+    "type=docker"
+  ]
 }
 
 target "release" {
@@ -77,5 +93,9 @@ target "release" {
 
   cache-to = [
     "type=registry,ref=lopezator/cache-test:build,mode=max"
+  ]
+
+  output = [
+    "type=registry"
   ]
 }
