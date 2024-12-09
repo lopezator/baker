@@ -3,7 +3,7 @@ group "default" {
 }
 
 target "prepare" {
-  target     = "prepare"
+  target = "prepare"
 
   cache-from = [
     "type=registry,ref=lopezator/baker:build",

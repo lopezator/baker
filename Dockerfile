@@ -6,31 +6,28 @@ RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/i
 
 # Copy source code.
 WORKDIR /go/src/github.com/lopezator/baker
+COPY --link . .
 
 # Prepare stage: Cache go modules.
 FROM base AS prepare
-RUN --mount=target=. \
-	--mount=type=cache,target=/go/pkg/mod \
+RUN --mount=type=cache,target=/go/pkg/mod \
 	make prepare
 
 # Lint stage: Cache golangci-lint.
 FROM prepare AS sanity-check
-RUN --mount=target=. \
-    --mount=type=cache,target=/go/pkg/mod \
+RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/golangci-lint \
     make sanity-check
 
 # Build stage: Cache Go build artifacts.
 FROM prepare AS build
-RUN --mount=target=. \
-    --mount=type=cache,target=/go/pkg/mod \
+RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
 	make build
 
 # Test stage: Cache Go test artifacts.
 FROM prepare AS test
-RUN --mount=target=. \
-    --mount=type=cache,target=/go/pkg/mod \
+RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
 	make test
 
