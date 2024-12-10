@@ -7,11 +7,6 @@ target "prepare" {
 
   cache-from = [
     "type=registry,ref=lopezator/baker:build",
-    "type=gha,scope=/go/pkg/mod"
-  ]
-
-  cache-to = [
-    "type=gha,scope=/go/pkg/mod,mode=max"
   ]
 
   output = [
@@ -23,15 +18,6 @@ target "sanity-check" {
   target     = "sanity-check"
   depends    = ["prepare"]
 
-  cache-from = [
-    "type=gha,scope=/go/pkg/mod",
-    "type=gha,scope=/root/.cache/golangci-lint"
-  ]
-
-  cache-to = [
-    "type=gha,scope=/root/.cache/golangci-lint,mode=max"
-  ]
-
   output = [
     "type=cacheonly"
   ]
@@ -41,15 +27,6 @@ target "test" {
   target     = "test"
   depends    = ["prepare"]
 
-  cache-from = [
-    "type=gha,scope=/go/pkg/mod",
-    "type=gha,scope=/root/.cache/go-build"
-  ]
-
-  cache-to = [
-    "type=gha,scope=/root/.cache/go-build,mode=max"
-  ]
-
   output = [
     "type=cacheonly"
   ]
@@ -58,15 +35,6 @@ target "test" {
 target "build" {
   target     = "build"
   depends    = ["prepare"]
-
-  cache-from = [
-    "type=gha,scope=/go/pkg/mod",
-    "type=gha,scope=/root/.cache/go-build"
-  ]
-
-  cache-to = [
-    "type=gha,scope=/root/.cache/go-build,mode=max"
-  ]
 
   tags = [
     "docker.io/lopezator/baker:build"
