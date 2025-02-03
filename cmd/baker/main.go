@@ -1,22 +1,19 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
-
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
+	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(map[string]string{"message": "pong"}); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})
-
-	if err := r.Run(":1337"); err != nil {
+	if err := http.ListenAndServe(":1337", nil); err != nil {
 		log.Fatal(err)
 	}
 }
