@@ -1,4 +1,4 @@
-group "default" {
+group "all" {
   targets = ["prepare", "sanity-check", "test", "build"]
 }
 
