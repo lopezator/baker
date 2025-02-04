@@ -1,3 +1,5 @@
+variable "DATABASE_URL" {}
+
 group "default" {
   targets = ["prepare", "sanity-check", "test", "build"]
 }
@@ -26,6 +28,10 @@ target "sanity-check" {
 target "test" {
   target     = "test"
   depends    = ["prepare"]
+
+  args = {
+    DATABASE_URL = "${DATABASE_URL}"
+  }
 
   output = [
     "type=cacheonly"

@@ -1,3 +1,5 @@
+DATABASE_URL ?= postgres://user:password@localhost:5432/database
+
 .PHONY: prepare
 prepare:
 	@echo "Running prepare..."
@@ -16,4 +18,4 @@ build:
 .PHONY: test
 test:
 	@echo "Running test..."
-	@go test -race -cover -v ./...
+	@DATABASE_URL="$(DATABASE_URL)" go test -race -cover -v ./...

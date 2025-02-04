@@ -27,9 +27,10 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 # Test stage: Cache Go test artifacts.
 FROM prepare AS test
+ARG DATABASE_URL
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-	make test
+    DATABASE_URL=$DATABASE_URL make test
 
 # Release stage: Copy binary from build stage.
 FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS release

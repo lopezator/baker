@@ -5,12 +5,25 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/DATA-DOG/go-txdb"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
+// Define the variables
+var (
+	databaseURL string
+)
+
+// TestMain is the entry point for the test suite.
+func TestMain(m *testing.M) {
+	databaseURL = os.Getenv("DATABASE_URL")
+	os.Exit(m.Run())
+}
+
+// TestPingEndpoint tests the /ping endpoint.
 func TestPingEndpoint(t *testing.T) {
 	// Create a new HTTP request
 	req, err := http.NewRequest(http.MethodGet, "/ping", nil)
@@ -44,9 +57,15 @@ func TestPingEndpoint(t *testing.T) {
 	}
 }
 
+// TestDatabase tests the database connection.
 func TestDatabase(t *testing.T) {
-	db := sql.OpenDB(txdb.New("pgx", "postgres://user:password@172.17.0.1:5432/database"))
-	defer db.Close()
+	db := sql.OpenDB(txdb.New("pgx", databaseURL))
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			t.Fatalf("Failed to close database: %v", err)
+		}
+	}()
 
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, username VARCHAR(50) NOT NULL)`); err != nil {
 		t.Fatalf("Failed to create table: %v", err)
