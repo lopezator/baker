@@ -72,12 +72,13 @@ jobs:
           GATEWAY_IP=$(docker inspect $(docker compose ps --format json | jq -r '.Name') | jq -r '.[].NetworkSettings.Networks.baker_default.Gateway')
           echo "DATABASE_URL=postgres://user:password@$GATEWAY_IP:2345/database" >> $GITHUB_ENV
 
-      - name: build image
+      - name: bake build target
         uses: docker/bake-action@v5
         with:
+          targets: build
           push: ${{ github.ref == 'refs/heads/main'}}
 
-      - name: release image
+      - name: bake release target
         if: github.ref == 'refs/heads/main'
         uses: docker/bake-action@v5
         with:
