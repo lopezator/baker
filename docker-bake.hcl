@@ -58,10 +58,6 @@ target "build" {
     "type=registry,ref=docker.io/lopezator/baker:build"
   ]
 
-  cache-to = [
-    "type=registry,ref=docker.io/lopezator/baker:build,mode=max"
-  ]
-
   tags = [
     "docker.io/lopezator/baker:build"
   ]
