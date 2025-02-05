@@ -25,7 +25,7 @@ target "sanity-check" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=registry,ref=docker.io/lopezator/baker:build"
+    "type=registry,ref=lopezator/baker:build"
   ]
 
   output = [
@@ -38,7 +38,7 @@ target "test" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=registry,ref=docker.io/lopezator/baker:build"
+    "type=registry,ref=lopezator/baker:build"
   ]
 
   args = {
@@ -55,11 +55,11 @@ target "build" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=registry,ref=docker.io/lopezator/baker:build"
+    "type=registry,ref=lopezator/baker:build"
   ]
 
   tags = [
-    "docker.io/lopezator/baker:build"
+    "lopezator/baker:build"
   ]
 
   output = [
@@ -73,7 +73,7 @@ target "release" {
   depends    = ["build"]
 
   tags = [
-    "docker.io/lopezator/baker:latest"
+    "lopezator/baker:latest"
   ]
 
   output = [
