@@ -75,7 +75,6 @@ jobs:
       - name: docker bake build target
         uses: docker/bake-action@v5
         with:
-          targets: build
           push: ${{ github.ref == 'refs/heads/main'}}
 
       - name: docker bake release target
