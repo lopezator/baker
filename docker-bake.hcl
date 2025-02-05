@@ -33,6 +33,23 @@ target "sanity-check" {
   ]
 }
 
+target "test" {
+  target     = "test"
+  depends    = ["prepare"]
+
+  cache-from = [
+    "type=registry,ref=docker.io/lopezator/baker:build"
+  ]
+
+  args = {
+    DATABASE_URL = "${DATABASE_URL}"
+  }
+
+  output = [
+    "type=cacheonly"
+  ]
+}
+
 target "build" {
   target     = "build"
   depends    = ["prepare"]
@@ -54,30 +71,9 @@ target "build" {
   ]
 }
 
-target "test" {
-  target     = "test"
-  depends    = ["prepare"]
-
-  cache-from = [
-    "type=registry,ref=docker.io/lopezator/baker:build"
-  ]
-
-  args = {
-    DATABASE_URL = "${DATABASE_URL}"
-  }
-
-  output = [
-    "type=cacheonly"
-  ]
-}
-
 target "release" {
   target     = "release"
   depends    = ["build"]
-
-  cache-from = [
-    "type=registry,ref=docker.io/lopezator/baker:build"
-  ]
 
   tags = [
     "docker.io/lopezator/baker:latest"
