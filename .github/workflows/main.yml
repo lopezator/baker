@@ -34,19 +34,19 @@ jobs:
       - name: golangci-lint cache
         uses: actions/cache@v4
         with:
-          path: cache-golangci-lint
+          path: /tmp/.cache-golangci-lint
           key: ${{ runner.os }}-golangci-lint-${{ hashFiles('.golangci.yml') }}-main
 
       - name: go mod cache
         uses: actions/cache@v4
         with:
-          path: go-pkg-mod
+          path: /tmp/.go-pkg-mod
           key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}-main
 
       - name: go build cache
         uses: actions/cache@v4
         with:
-          path: cache-go-build
+          path: /tmp/.cache-go-build
           key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}-main
 
       - name: inject cache folders into docker
