@@ -11,8 +11,16 @@ target "base" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
+  cache-to = [
+    "type=registry,ref=lopezator/baker:build"
+  ]
+
+  tags = [
+    "lopezator/baker:build"
+  ]
+
   output = [
-    "type=cacheonly"
+    "type=registry"
   ]
 }
 
@@ -71,12 +79,12 @@ target "build" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
-  tags = [
-    "lopezator/baker:build"
+  output = [
+    "type=registry"
   ]
 
-  output = [
-    "type=docker"
+  tags = [
+    "lopezator/baker:build"
   ]
 }
 
