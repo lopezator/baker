@@ -1,7 +1,23 @@
 variable "DATABASE_URL" {}
 
 group "default" {
-  targets = ["prepare", "sanity-check", "test", "build"]
+  targets = ["base", "prepare", "sanity-check", "test", "build"]
+}
+
+target "base" {
+  target = "base"
+
+  cache-from = [
+    "type=registry,ref=lopezator/baker:build"
+  ]
+
+  cache-to = [
+    "type=inline"
+  ]
+
+  output = [
+    "type=cacheonly"
+  ]
 }
 
 target "prepare" {
@@ -28,6 +44,10 @@ target "sanity-check" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
+  cache-to = [
+    "type=inline"
+  ]
+
   output = [
     "type=cacheonly"
   ]
@@ -39,6 +59,10 @@ target "test" {
 
   cache-from = [
     "type=registry,ref=lopezator/baker:build"
+  ]
+
+  cache-to = [
+    "type=inline"
   ]
 
   args = {
@@ -56,6 +80,10 @@ target "build" {
 
   cache-from = [
     "type=registry,ref=lopezator/baker:build"
+  ]
+
+  cache-to = [
+    "type=inline"
   ]
 
   tags = [
