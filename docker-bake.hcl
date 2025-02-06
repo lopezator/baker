@@ -11,10 +11,6 @@ target "base" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
-  cache-to = [
-    "type=inline"
-  ]
-
   output = [
     "type=cacheonly"
   ]
@@ -22,13 +18,10 @@ target "base" {
 
 target "prepare" {
   target = "prepare"
+  depends = ["base"]
 
   cache-from = [
     "type=registry,ref=lopezator/baker:build",
-  ]
-
-  cache-to = [
-    "type=inline"
   ]
 
   output = [
@@ -44,10 +37,6 @@ target "sanity-check" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
-  cache-to = [
-    "type=inline"
-  ]
-
   output = [
     "type=cacheonly"
   ]
@@ -59,10 +48,6 @@ target "test" {
 
   cache-from = [
     "type=registry,ref=lopezator/baker:build"
-  ]
-
-  cache-to = [
-    "type=inline"
   ]
 
   args = {
@@ -82,16 +67,11 @@ target "build" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
-  cache-to = [
-    "type=inline"
-  ]
-
   tags = [
     "lopezator/baker:build"
   ]
 
   output = [
-    "type=docker",
     "type=registry"
   ]
 }
