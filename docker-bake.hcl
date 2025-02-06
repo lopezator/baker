@@ -83,7 +83,7 @@ target "build" {
   ]
 
   cache-to = [
-    "type=inline"
+    "type=registry,ref=lopezator/baker:build"
   ]
 
   tags = [
