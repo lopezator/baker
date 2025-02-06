@@ -67,6 +67,10 @@ target "build" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
+  cache-to = [
+    "type=registry,ref=lopezator/baker:build"
+  ]
+
   tags = [
     "lopezator/baker:build"
   ]
