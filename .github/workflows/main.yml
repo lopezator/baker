@@ -62,6 +62,7 @@ jobs:
 
       - name: inject docker cache into docker
         run: |
+          mkdir -p /tmp/.docker-cache
           if [ -f /tmp/.docker-cache/postgres.tar ]; then
             docker load -i /tmp/.docker-cache/postgres.tar
           fi
