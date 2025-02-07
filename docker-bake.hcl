@@ -14,6 +14,10 @@ target "base" {
   cache-to = [
     "type=gha,mode=max",
   ]
+
+  output = [
+    "type=docker"
+  ]
 }
 
 target "prepare" {
@@ -27,10 +31,6 @@ target "prepare" {
   cache-to = [
     "type=gha,mode=max",
   ]
-
-  output = [
-    "type=cacheonly"
-  ]
 }
 
 target "sanity-check" {
@@ -43,10 +43,6 @@ target "sanity-check" {
 
   cache-to = [
     "type=gha,mode=max",
-  ]
-
-  output = [
-    "type=cacheonly"
   ]
 }
 
@@ -65,6 +61,10 @@ target "test" {
   args = {
     DATABASE_URL = "${DATABASE_URL}"
   }
+
+  output = [
+    "type=docker"
+  ]
 }
 
 target "build" {
@@ -81,6 +81,10 @@ target "build" {
 
   tags = [
     "lopezator/baker:build"
+  ]
+
+  output = [
+    "type=docker"
   ]
 }
 
