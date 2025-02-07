@@ -14,10 +14,6 @@ target "base" {
   cache-to = [
     "type=inline,mode=max"
   ]
-
-  output = [
-    "type=docker,dest=/tmp/.docker-cache/golang.tar"
-  ]
 }
 
 target "prepare" {
@@ -25,6 +21,10 @@ target "prepare" {
   depends = ["base"]
 
   cache-from = [
+    "type=gha",
+  ]
+
+  cache-to = [
     "type=gha",
   ]
 
@@ -41,6 +41,10 @@ target "sanity-check" {
     "type=gha"
   ]
 
+  cache-to = [
+    "type=gha",
+  ]
+
   output = [
     "type=cacheonly"
   ]
@@ -54,13 +58,13 @@ target "test" {
     "type=gha"
   ]
 
+  cache-to = [
+    "type=gha",
+  ]
+
   args = {
     DATABASE_URL = "${DATABASE_URL}"
   }
-
-  output = [
-    "type=docker,dest=/tmp/.docker-cache/postgres.tar"
-  ]
 }
 
 target "build" {
@@ -72,7 +76,7 @@ target "build" {
   ]
 
   cache-to = [
-    "type=inline,mode=max"
+    "type=gha"
   ]
 
   tags = [
