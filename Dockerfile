@@ -1,5 +1,5 @@
 # Base stage for dependencies and tools.
-FROM golang:1.23.2-bullseye@sha256:ecb3fe70e1fd6cef4c5c74246a7525c3b7d59c48ea0589bbb0e57b1b37321fb9 AS base
+FROM golang:1.23.2-bullseye AS base
 
 # Install golangci-lint.
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v1.61.0

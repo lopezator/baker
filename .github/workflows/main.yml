@@ -76,6 +76,8 @@ jobs:
         uses: docker/bake-action@v5
         with:
           push: ${{ github.ref == 'refs/heads/main'}}
+          set: |
+            ${{ github.ref == 'refs/heads/main' && '*.cache-to=type=gha' || '' }}
 
       - name: docker bake push release
         if: github.ref == 'refs/heads/main'
