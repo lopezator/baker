@@ -79,7 +79,7 @@ jobs:
       - name: docker bake build
         uses: docker/bake-action@v5
         with:
-          push: ${{ github.ref == 'refs/heads/main'}}
+          push: false
           set: |
             ${{ github.ref == 'refs/heads/main' && '*.cache-to=type=gha' || '' }}
 
