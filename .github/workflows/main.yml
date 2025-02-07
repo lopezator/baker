@@ -75,16 +75,7 @@ jobs:
       - name: docker bake build
         uses: docker/bake-action@v5
         with:
-          push: false
-
-      - name: docker bake push build
-        if: github.ref == 'refs/heads/main'
-        uses: docker/bake-action@v5
-        with:
-          targets: build
-          push: true
-          set: |
-            *.cache-to=type=registry,ref=lopezator/baker:build
+          push: ${{ github.ref == 'refs/heads/main'}}
 
       - name: docker bake push release
         if: github.ref == 'refs/heads/main'
