@@ -16,7 +16,7 @@ target "base" {
   ]
 
   output = [
-    "type=cacheonly"
+    "type=docker"
   ]
 }
 
