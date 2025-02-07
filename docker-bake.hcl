@@ -16,7 +16,7 @@ target "base" {
   ]
 
   output = [
-    "type=docker"
+    "type=docker,dest=/tmp/.docker-cache/golang.tar"
   ]
 }
 
@@ -59,7 +59,7 @@ target "test" {
   }
 
   output = [
-    "type=cacheonly"
+    "type=docker,dest=/tmp/.docker-cache/postgres.tar"
   ]
 }
 

@@ -88,13 +88,3 @@ jobs:
         with:
           targets: release
           push: true
-
-      - name: Post inject docker cache into docker
-        run: |
-          mkdir -p /tmp/.docker-cache
-          if [ ! -f /tmp/.docker-cache/postgres.tar ]; then
-            docker save -o /tmp/.docker-cache/postgres.tar postgres
-          fi
-          if [ ! -f /tmp/.docker-cache/golang.tar ]; then
-            docker save -o /tmp/.docker-cache/golang.tar golang
-          fi
