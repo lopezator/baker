@@ -8,7 +8,7 @@ target "base" {
   target = "base"
 
   cache-from = [
-    "type=registry,ref=lopezator/baker:build"
+    "type=gha"
   ]
 
   cache-to = [
@@ -25,7 +25,7 @@ target "prepare" {
   depends = ["base"]
 
   cache-from = [
-    "type=registry,ref=lopezator/baker:build",
+    "type=gha",
   ]
 
   output = [
@@ -38,7 +38,7 @@ target "sanity-check" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=registry,ref=lopezator/baker:build"
+    "type=gha"
   ]
 
   output = [
@@ -51,7 +51,7 @@ target "test" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=registry,ref=lopezator/baker:build"
+    "type=gha"
   ]
 
   args = {
@@ -68,7 +68,7 @@ target "build" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=registry,ref=lopezator/baker:build"
+    "type=gha"
   ]
 
   cache-to = [
@@ -77,10 +77,6 @@ target "build" {
 
   tags = [
     "lopezator/baker:build"
-  ]
-
-  output = [
-    "type=image"
   ]
 }
 
