@@ -76,11 +76,7 @@ target "build" {
   ]
 
   output = [
-<<<<<<< Updated upstream
-    "type=registry"
-=======
     "type=image"
->>>>>>> Stashed changes
   ]
 }
 
