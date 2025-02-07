@@ -72,7 +72,7 @@ target "build" {
   ]
 
   cache-to = [
-    "type=registry,ref=lopezator/baker:build,mode=max"
+    "type=inline,mode=max"
   ]
 }
 
