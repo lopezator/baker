@@ -16,7 +16,7 @@ target "base" {
   ]
 
   output = [
-    "type=docker"
+    "type=image"
   ]
 }
 
@@ -31,6 +31,10 @@ target "prepare" {
   cache-to = [
     "type=gha,mode=max",
   ]
+
+  output = [
+    "type=cacheonly"
+  ]
 }
 
 target "sanity-check" {
@@ -43,6 +47,10 @@ target "sanity-check" {
 
   cache-to = [
     "type=gha,mode=max",
+  ]
+
+  output = [
+    "type=cacheonly"
   ]
 }
 
@@ -63,7 +71,7 @@ target "test" {
   }
 
   output = [
-    "type=docker"
+    "type=image"
   ]
 }
 
@@ -84,7 +92,7 @@ target "build" {
   ]
 
   output = [
-    "type=docker"
+    "type=image"
   ]
 }
 
