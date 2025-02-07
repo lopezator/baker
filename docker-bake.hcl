@@ -11,6 +11,10 @@ target "base" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
+  cache-to = [
+    "type=inline,mode=max"
+  ]
+
   output = [
     "type=cacheonly"
   ]
@@ -68,7 +72,7 @@ target "build" {
   ]
 
   cache-to = [
-    "type=registry,ref=lopezator/baker:build"
+    "type=inline,mode=max"
   ]
 
   tags = [
