@@ -25,11 +25,11 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: docker compose cache
+      - name: docker cache
         uses: actions/cache@v4
         with:
-          path: /tmp/.docker-compose-cache
-          key: ${{ runner.os }}-docker-compose-${{ hashFiles('docker-compose.yaml') }}
+          path: /tmp/.docker-cache
+          key: ${{ runner.os }}-docker-${{ hashFiles('Dockerfile', 'docker-compose.yaml') }}
 
       - name: golangci-lint cache
         uses: actions/cache@v4
@@ -60,10 +60,13 @@ jobs:
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
-      - name: inject docker compose cache into docker
+      - name: inject docker cache into docker
         run: |
-          if [ -f /tmp/.docker-compose-cache/postgres.tar ]; then
-            docker load -i /tmp/.docker-compose-cache/postgres.tar
+          if [ -f /tmp/.docker-cache/postgres.tar ]; then
+            docker load -i /tmp/.docker-cache/postgres.tar
+          fi
+          if [ -f /tmp/.docker-cache/golang.tar ]; then
+            docker load -i /tmp/.docker-cache/golang.tar
           fi
 
       - name: prepare test environment
@@ -86,9 +89,12 @@ jobs:
           targets: release
           push: true
 
-      - name: Post inject docker compose cache into docker
+      - name: Post inject docker cache into docker
         run: |
-          if [ ! -f /tmp/.docker-compose-cache/postgres.tar ]; then
-            mkdir -p /tmp/.docker-compose-cache
-            docker save -o /tmp/.docker-compose-cache/postgres.tar postgres
+          mkdir -p /tmp/.docker-cache
+          if [ ! -f /tmp/.docker-cache/postgres.tar ]; then
+            docker save -o /tmp/.docker-cache/postgres.tar postgres
+          fi
+          if [ ! -f /tmp/.docker-cache/golang.tar ]; then
+            docker save -o /tmp/.docker-cache/golang.tar golang
           fi
