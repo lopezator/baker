@@ -12,7 +12,7 @@ target "base" {
   ]
 
   cache-to = [
-    "type=inline,mode=max"
+    "type=gha,mode=max",
   ]
 }
 
@@ -25,7 +25,7 @@ target "prepare" {
   ]
 
   cache-to = [
-    "type=gha",
+    "type=gha,mode=max",
   ]
 
   output = [
@@ -42,7 +42,7 @@ target "sanity-check" {
   ]
 
   cache-to = [
-    "type=gha",
+    "type=gha,mode=max",
   ]
 
   output = [
@@ -59,7 +59,7 @@ target "test" {
   ]
 
   cache-to = [
-    "type=gha",
+    "type=gha,mode=max",
   ]
 
   args = {
@@ -76,7 +76,7 @@ target "build" {
   ]
 
   cache-to = [
-    "type=gha"
+    "type=gha,mode=max",
   ]
 
   tags = [
