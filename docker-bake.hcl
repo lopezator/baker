@@ -7,22 +7,21 @@ group "default" {
 target "base" {
   target = "base"
 
-  # Take the cache from the previous build.
-  # This will avoid re-downloading the goland base image and the golangci-lint binary again.
   cache-from = [
     "type=registry,ref=lopezator/baker:cache",
-  ]
-
-  # Take the cache from the previous build.
-  # This will avoid re-downloading the goland base image and the golangci-lint binary again.
-  cache-to = [
-    "type=registry,ref=lopezator/baker:cache",
+    #"type=local,src=/tmp/.buildx-cache"
   ]
 
   tags = [
     "lopezator/baker:cache"
   ]
 
+  cache-to = [
+    "type=registry,ref=lopezator/baker:cache,mode=max",
+    #"type=local,dest=/tmp/.buildx-cache"
+  ]
+
+  # Export as a Docker image
   output = [
     "type=image"
   ]
@@ -38,9 +37,9 @@ target "prepare" {
   # regarding buildkit.
   # Using type=cacheonly ensures that the build output is effectively discarded; the layers are saved to BuildKit's
   # cache, but Buildx will not attempt to load the result to the Docker Engine's image store.
-  output = [
-    "type=cacheonly"
-  ]
+  # output = [
+  #   "type=cacheonly"
+  # ]
 }
 
 target "sanity-check" {
