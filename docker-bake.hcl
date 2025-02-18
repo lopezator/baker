@@ -22,6 +22,10 @@ target "base" {
   tags = [
     "lopezator/baker:cache"
   ]
+
+  output = [
+    "type=image"
+  ]
 }
 
 target "prepare" {
