@@ -9,19 +9,12 @@ target "base" {
 
   cache-from = [
     "type=registry,ref=lopezator/baker:cache",
-    #"type=local,src=/tmp/.buildx-cache"
-  ]
-
-  tags = [
-    "lopezator/baker:cache"
   ]
 
   cache-to = [
     "type=registry,ref=lopezator/baker:cache,mode=max",
-    #"type=local,dest=/tmp/.buildx-cache"
   ]
 
-  # Export as a Docker image
   output = [
     "type=image"
   ]
@@ -33,13 +26,21 @@ target "prepare" {
   # This step requires to have the cache prepared from the previous build.
   depends = ["base"]
 
-  # We are just download go modules here, and that cache is handled by buildkit cache dance, nothing to cache here
-  # regarding buildkit.
-  # Using type=cacheonly ensures that the build output is effectively discarded; the layers are saved to BuildKit's
-  # cache, but Buildx will not attempt to load the result to the Docker Engine's image store.
-  # output = [
-  #   "type=cacheonly"
-  # ]
+  cache-from = [
+    "type=registry,ref=lopezator/baker:cache",
+  ]
+
+  tags = [
+    "lopezator/baker:cache",
+  ]
+
+  cache-to = [
+    "type=registry,ref=lopezator/baker:cache,mode=max",
+  ]
+
+  output = [
+    "type=image",
+  ]
 }
 
 target "sanity-check" {
