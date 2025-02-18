@@ -73,7 +73,7 @@ jobs:
       - name: docker bake build
         uses: docker/bake-action@v5
         with:
-          targets: prepare
+          targets: base
           push: true
 
       - name: docker bake push release
