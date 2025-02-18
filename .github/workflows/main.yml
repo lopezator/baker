@@ -73,7 +73,8 @@ jobs:
       - name: docker bake build
         uses: docker/bake-action@v5
         with:
-          push: false
+          targets: base
+          push: true
 
       - name: docker bake push release
         if: github.ref == 'refs/heads/main'

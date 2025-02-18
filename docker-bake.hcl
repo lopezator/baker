@@ -8,13 +8,20 @@ target "base" {
   target = "base"
 
   cache-from = [
-    "type=gha"
+    "type=registry,ref=lopezator/baker:cache",
+    "type=local,src=/tmp/.buildx-cache"
+  ]
+
+  tags = [
+    "lopezator/baker:cache"
   ]
 
   cache-to = [
-    "type=gha,mode=max",
+    "type=registry,ref=lopezator/baker:cache,mode=max",
+    "type=local,dest=/tmp/.buildx-cache"
   ]
 
+  # Export as a Docker image
   output = [
     "type=image"
   ]
