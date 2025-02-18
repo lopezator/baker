@@ -13,9 +13,8 @@ target "base" {
     "type=registry,ref=lopezator/baker:cache",
   ]
 
-  # Save the cache as a docker image, to buildkit can use for the next build targets.
-  output = [
-    "type=image"
+  cache-to = [
+    "type=inline",
   ]
 }
 
@@ -32,6 +31,9 @@ target "prepare" {
   #output = [
   #  "type=cacheonly"
   #]
+  cache-from = [
+    "type=inline"
+  ]
 
   # Take the cache from the previous build.
   # This will avoid re-downloading the goland base image and the golangci-lint binary again.
