@@ -31,15 +31,11 @@ target "prepare" {
   ]
 
   tags = [
-    "lopezator/baker:cache",
+    "lopezator/baker:latest",
   ]
 
   cache-to = [
     "type=registry,ref=lopezator/baker:cache,mode=max",
-  ]
-
-  output = [
-    "type=registry,ref=lopezator/baker:cache",
   ]
 }
 

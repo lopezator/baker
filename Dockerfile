@@ -6,7 +6,7 @@ RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/i
 
 # Copy source code.
 WORKDIR /go/src/github.com/lopezator/baker
-COPY --link . .
+COPY . .
 
 # Prepare stage: Cache go modules.
 FROM base AS prepare
