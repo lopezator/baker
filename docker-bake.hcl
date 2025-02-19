@@ -7,33 +7,44 @@ group "default" {
 target "base" {
   target = "base"
 
+  tags = [
+    "lopezator/baker:base"
+  ]
+
   cache-from = [
-    "type=gha"
+    "type=registry,ref=lopezator/baker:base",
+    "type=registry,ref=lopezator/baker:cache",
   ]
 
   cache-to = [
-    "type=gha,mode=max",
+    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   output = [
-    "type=image"
+    "type=registry"
   ]
 }
 
 target "prepare" {
   target = "prepare"
+
+  # This step requires to have the cache prepared from the previous build.
   depends = ["base"]
 
   cache-from = [
-    "type=gha",
+    "type=registry,ref=lopezator/baker:cache",
+  ]
+
+  tags = [
+    "lopezator/baker:latest",
   ]
 
   cache-to = [
-    "type=gha,mode=max",
+    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   output = [
-    "type=cacheonly"
+    "type=registry"
   ]
 }
 
