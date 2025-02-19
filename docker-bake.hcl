@@ -7,8 +7,12 @@ group "default" {
 target "base" {
   target = "base"
 
+  tags = [
+    "lopezator/baker:base"
+  ]
+
   cache-from = [
-    "type=registry,ref=lopezator/baker:latest",
+    "type=registry,ref=lopezator/baker:base",
     "type=registry,ref=lopezator/baker:cache",
   ]
 
