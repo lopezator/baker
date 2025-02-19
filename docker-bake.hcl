@@ -16,13 +16,14 @@ target "base" {
   ]
 
   output = [
-    "type=inline"
+    "type=image,ref=lopezator/baker:cache"
   ]
 }
 
 target "prepare" {
   target = "prepare"
 
+  # This step requires to have the cache prepared from the previous build.
   depends = ["base"]
 
   cache-from = [
@@ -38,7 +39,7 @@ target "prepare" {
   ]
 
   output = [
-    "type=inline",
+    "type=image,ref=lopezator/baker:cache",
   ]
 }
 
