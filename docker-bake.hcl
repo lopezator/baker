@@ -16,7 +16,7 @@ target "base" {
   ]
 
   output = [
-    "type=image,ref=lopezator/baker:cache"
+    "type=registry,ref=lopezator/baker:cache"
   ]
 }
 
@@ -39,7 +39,7 @@ target "prepare" {
   ]
 
   output = [
-    "type=image,ref=lopezator/baker:cache",
+    "type=registry,ref=lopezator/baker:cache",
   ]
 }
 
