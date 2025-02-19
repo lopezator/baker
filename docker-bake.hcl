@@ -15,7 +15,9 @@ target "base" {
     "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
-  output = ["type=docker"]
+  output = [
+    "type=registry"
+  ]
 }
 
 target "prepare" {
@@ -37,7 +39,7 @@ target "prepare" {
   ]
 
   output = [
-    "type=image"
+    "type=registry"
   ]
 }
 
