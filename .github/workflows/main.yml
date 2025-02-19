@@ -70,6 +70,9 @@ jobs:
           GATEWAY_IP=$(docker inspect $(docker compose ps --format json | jq -r '.Name') | jq -r '.[].NetworkSettings.Networks.baker_default.Gateway')
           echo "DATABASE_URL=postgres://user:password@$GATEWAY_IP:2345/database" >> $GITHUB_ENV
 
+      - name: Pull cache before build
+        run: docker pull lopezator/baker:cache || true
+
       - name: docker bake build
         uses: docker/bake-action@v5
         with:

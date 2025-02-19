@@ -16,14 +16,13 @@ target "base" {
   ]
 
   output = [
-    "type=image"
+    "type=inline"
   ]
 }
 
 target "prepare" {
   target = "prepare"
 
-  # This step requires to have the cache prepared from the previous build.
   depends = ["base"]
 
   cache-from = [
@@ -39,7 +38,7 @@ target "prepare" {
   ]
 
   output = [
-    "type=image",
+    "type=inline",
   ]
 }
 
