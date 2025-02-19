@@ -14,10 +14,6 @@ target "base" {
   cache-to = [
     "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
-
-  output = [
-    "type=registry,ref=lopezator/baker:cache"
-  ]
 }
 
 target "prepare" {
