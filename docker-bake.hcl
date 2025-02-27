@@ -10,6 +10,10 @@ target "prepare" {
   cache-from = [
     "type=registry,ref=lopezator/baker:build",
   ]
+
+  output = [
+    "type=cacheonly"
+  ]
 }
 
 target "sanity-check" {
