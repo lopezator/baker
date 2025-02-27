@@ -11,8 +11,12 @@ target "base" {
     "type=registry,ref=lopezator/baker:cache"
   ]
 
+  cache-to = [
+    "type=inline"
+  ]
+
   output = [
-    "type=image"
+    "type=cacheonly"
   ]
 }
 
@@ -24,8 +28,12 @@ target "prepare" {
     "type=registry,ref=lopezator/baker:cache"
   ]
 
+  cache-to = [
+    "type=inline"
+  ]
+
   output = [
-    "type=image"
+    "type=cacheonly"
   ]
 }
 
@@ -37,8 +45,12 @@ target "sanity-check" {
     "type=registry,ref=lopezator/baker:cache"
   ]
 
+  cache-to = [
+    "type=inline"
+  ]
+
   output = [
-    "type=image"
+    "type=cacheonly"
   ]
 }
 
@@ -50,12 +62,16 @@ target "test" {
     "type=registry,ref=lopezator/baker:cache"
   ]
 
+  cache-to = [
+    "type=inline"
+  ]
+
   args = {
     DATABASE_URL = "${DATABASE_URL}"
   }
 
   output = [
-    "type=image"
+    "type=cacheonly"
   ]
 }
 
@@ -67,12 +83,12 @@ target "build" {
     "type=registry,ref=lopezator/baker:cache"
   ]
 
-  cache-to = [
-    "type=registry,ref=lopezator/baker:cache,mode=max",
+  tags = [
+    "lopezator/baker:cache"
   ]
 
-  tags = [
-    "lopezator/baker:build"
+  cache-to = [
+    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   output = [
