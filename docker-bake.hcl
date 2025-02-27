@@ -19,6 +19,10 @@ target "prepare" {
 target "sanity-check" {
   target     = "sanity-check"
   depends    = ["prepare"]
+
+  output = [
+    "type=cacheonly"
+  ]
 }
 
 target "test" {
@@ -28,6 +32,10 @@ target "test" {
   args = {
     DATABASE_URL = "${DATABASE_URL}"
   }
+
+  output = [
+    "type=cacheonly"
+  ]
 }
 
 target "build" {
@@ -36,6 +44,10 @@ target "build" {
 
   tags = [
     "lopezator/baker:build"
+  ]
+
+  cache-to = [
+    "type=registry,ref=lopezator/baker:build,mode=max",
   ]
 
   output = [
