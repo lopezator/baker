@@ -12,7 +12,7 @@ target "prepare" {
   ]
 
   cache-to = [
-    "type=registry,ref=lopezator/baker:cache,mode=max"
+    "inline"
   ]
 
   output = [
@@ -24,14 +24,6 @@ target "prepare" {
   target = "prepare"
   depends = ["base"]
 
-  cache-from = [
-    "type=registry,ref=lopezator/baker:cache"
-  ]
-
-  cache-to = [
-    "type=inline"
-  ]
-
   output = [
     "type=cacheonly"
   ]
@@ -41,14 +33,6 @@ target "sanity-check" {
   target     = "sanity-check"
   depends    = ["prepare"]
 
-  cache-from = [
-    "type=registry,ref=lopezator/baker:cache"
-  ]
-
-  cache-to = [
-    "type=inline"
-  ]
-
   output = [
     "type=cacheonly"
   ]
@@ -57,14 +41,6 @@ target "sanity-check" {
 target "test" {
   target     = "test"
   depends    = ["prepare"]
-
-  cache-from = [
-    "type=registry,ref=lopezator/baker:cache"
-  ]
-
-  cache-to = [
-    "type=inline"
-  ]
 
   args = {
     DATABASE_URL = "${DATABASE_URL}"
