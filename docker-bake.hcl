@@ -42,6 +42,10 @@ target "build" {
     "lopezator/baker:build"
   ]
 
+  cache-to = [
+    "type=registry,ref=lopezator/baker:build,mode=max",
+  ]
+
   output = [
     "type=image"
   ]
