@@ -8,11 +8,11 @@ target "base" {
   target = "base"
 
   cache-from = [
-    "type=gha"
+    "type=registry,ref=lopezator/baker:cache"
   ]
 
   cache-to = [
-    "type=gha,mode=max",
+    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   output = [
@@ -25,15 +25,15 @@ target "prepare" {
   depends = ["base"]
 
   cache-from = [
-    "type=gha",
+    "type=registry,ref=lopezator/baker:cache"
   ]
 
   cache-to = [
-    "type=gha,mode=max",
+    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   output = [
-    "type=cacheonly"
+    "type=image"
   ]
 }
 
@@ -42,15 +42,15 @@ target "sanity-check" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=gha"
+    "type=registry,ref=lopezator/baker:cache"
   ]
 
   cache-to = [
-    "type=gha,mode=max",
+    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   output = [
-    "type=cacheonly"
+    "type=image"
   ]
 }
 
@@ -59,11 +59,11 @@ target "test" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=gha"
+    "type=registry,ref=lopezator/baker:cache"
   ]
 
   cache-to = [
-    "type=gha,mode=max",
+    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   args = {
@@ -80,11 +80,11 @@ target "build" {
   depends    = ["prepare"]
 
   cache-from = [
-    "type=gha"
+    "type=registry,ref=lopezator/baker:cache"
   ]
 
   cache-to = [
-    "type=gha,mode=max",
+    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   tags = [
