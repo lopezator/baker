@@ -28,10 +28,6 @@ target "prepare" {
     "type=registry,ref=lopezator/baker:cache"
   ]
 
-  cache-to = [
-    "type=registry,ref=lopezator/baker:cache,mode=max",
-  ]
-
   output = [
     "type=image"
   ]
@@ -45,10 +41,6 @@ target "sanity-check" {
     "type=registry,ref=lopezator/baker:cache"
   ]
 
-  cache-to = [
-    "type=registry,ref=lopezator/baker:cache,mode=max",
-  ]
-
   output = [
     "type=image"
   ]
@@ -60,10 +52,6 @@ target "test" {
 
   cache-from = [
     "type=registry,ref=lopezator/baker:cache"
-  ]
-
-  cache-to = [
-    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   args = {
