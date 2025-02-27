@@ -25,12 +25,6 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: docker compose cache
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.docker-compose-cache
-          key: ${{ runner.os }}-docker-compose-${{ hashFiles('docker-compose.yaml') }}
-
       - name: golangci-lint cache
         uses: actions/cache@v4
         with:
@@ -60,12 +54,6 @@ jobs:
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
-      - name: inject docker compose cache into docker
-        run: |
-          if [ -f /tmp/.docker-compose-cache/postgres.tar ]; then
-            docker load -i /tmp/.docker-compose-cache/postgres.tar
-          fi
-
       - name: prepare test environment
         run: |
           docker compose up -d postgres
@@ -83,10 +71,3 @@ jobs:
         with:
           targets: release
           push: true
-
-      - name: Post inject docker compose cache into docker
-        run: |
-          if [ ! -f /tmp/.docker-compose-cache/postgres.tar ]; then
-            mkdir -p /tmp/.docker-compose-cache
-            docker save -o /tmp/.docker-compose-cache/postgres.tar postgres
-          fi
