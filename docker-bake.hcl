@@ -8,7 +8,7 @@ target "base" {
   target = "base"
 
   cache-from = [
-    "type=registry,ref=lopezator/baker:cache"
+    "type=registry,ref=lopezator/baker:build"
   ]
 
   cache-to = [
