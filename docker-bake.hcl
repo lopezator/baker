@@ -84,7 +84,7 @@ target "build" {
   ]
 
   tags = [
-    "lopezator/baker:cache"
+    "lopezator/baker:build"
   ]
 
   cache-to = [
