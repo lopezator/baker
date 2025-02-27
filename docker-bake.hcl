@@ -10,52 +10,20 @@ target "prepare" {
   cache-from = [
     "type=registry,ref=lopezator/baker:build",
   ]
-
-  cache-to = [
-    "type=inline"
-  ]
-
-  output = [
-    "type=cacheonly"
-  ]
 }
 
 target "sanity-check" {
   target     = "sanity-check"
   depends    = ["prepare"]
-
-  cache-from = [
-    "type=registry,ref=lopezator/baker:cache"
-  ]
-
-  cache-to = [
-    "type=inline"
-  ]
-
-  output = [
-    "type=cacheonly"
-  ]
 }
 
 target "test" {
   target     = "test"
   depends    = ["prepare"]
 
-  cache-from = [
-    "type=registry,ref=lopezator/baker:cache"
-  ]
-
-  cache-to = [
-    "type=inline"
-  ]
-
   args = {
     DATABASE_URL = "${DATABASE_URL}"
   }
-
-  output = [
-    "type=cacheonly"
-  ]
 }
 
 target "build" {
