@@ -8,13 +8,21 @@ target "prepare" {
   target = "prepare"
 
   cache-from = [
-    "type=registry,ref=lopezator/baker:build",
+    "type=registry,ref=lopezator/baker:build"
+  ]
+
+  output = [
+    "type=cacheonly"
   ]
 }
 
 target "sanity-check" {
   target     = "sanity-check"
   depends    = ["prepare"]
+
+  output = [
+    "type=cacheonly"
+  ]
 }
 
 target "test" {
@@ -24,6 +32,10 @@ target "test" {
   args = {
     DATABASE_URL = "${DATABASE_URL}"
   }
+
+  output = [
+    "type=cacheonly"
+  ]
 }
 
 target "build" {
