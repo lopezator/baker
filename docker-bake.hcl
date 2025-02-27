@@ -23,19 +23,11 @@ target "prepare" {
 target "prepare" {
   target = "prepare"
   depends = ["base"]
-
-  output = [
-    "type=cacheonly"
-  ]
 }
 
 target "sanity-check" {
   target     = "sanity-check"
   depends    = ["prepare"]
-
-  output = [
-    "type=cacheonly"
-  ]
 }
 
 target "test" {
@@ -45,10 +37,6 @@ target "test" {
   args = {
     DATABASE_URL = "${DATABASE_URL}"
   }
-
-  output = [
-    "type=cacheonly"
-  ]
 }
 
 target "build" {
