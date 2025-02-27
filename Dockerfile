@@ -8,7 +8,7 @@ WORKDIR /go/src/github.com/lopezator/baker
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v1.61.0
 
 # Copy only the go.mod and go.sum files to cache dependencies
-COPY go.mod go.sum ./
+COPY go.mod go.sum Makefile ./
 
 # Cache go modules
 RUN --mount=type=cache,target=/go/pkg/mod \
