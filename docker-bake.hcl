@@ -20,11 +20,6 @@ target "prepare" {
   ]
 }
 
-target "prepare" {
-  target = "prepare"
-  depends = ["base"]
-}
-
 target "sanity-check" {
   target     = "sanity-check"
   depends    = ["prepare"]
@@ -43,16 +38,8 @@ target "build" {
   target     = "build"
   depends    = ["prepare"]
 
-  cache-from = [
-    "type=registry,ref=lopezator/baker:cache"
-  ]
-
   tags = [
     "lopezator/baker:build"
-  ]
-
-  cache-to = [
-    "type=registry,ref=lopezator/baker:cache,mode=max",
   ]
 
   output = [
