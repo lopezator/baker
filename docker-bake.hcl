@@ -11,10 +11,6 @@ target "prepare" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
-  cache-to = [
-    "inline"
-  ]
-
   output = [
     "type=cacheonly"
   ]
