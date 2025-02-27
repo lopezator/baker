@@ -8,11 +8,13 @@ target "prepare" {
   target = "prepare"
 
   cache-from = [
-    "type=registry,ref=lopezator/baker:build"
+    "type=registry,ref=lopezator/baker:build",
+    "type=local,src=/tmp/.go-pkg-mod"
   ]
 
   cache-to = [
-    "type=inline"
+    "type=inline",
+    "type=local,dest=/tmp/.go-pkg-mod"
   ]
 
   output = [
