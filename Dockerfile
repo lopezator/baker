@@ -1,5 +1,7 @@
+ARG GOLANG_IMAGE=golang:1.23.2-bullseye
+
 # Base stage for dependencies and tools.
-FROM golang:1.23.2-bullseye AS prepare
+FROM ${GOLANG_IMAGE} AS prepare
 
 # Copy source code.
 WORKDIR /go/src/github.com/lopezator/baker
