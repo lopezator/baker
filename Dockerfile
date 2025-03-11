@@ -1,13 +1,15 @@
 ARG GOLANG_IMAGE=golang:1.23.2-bullseye
 
 # Base stage for dependencies and tools.
-FROM ${GOLANG_IMAGE} AS prepare
+FROM ${GOLANG_IMAGE} AS base
 
 # Copy source code.
 WORKDIR /go/src/github.com/lopezator/baker
 
 # Install golangci-lint.
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v1.61.0
+
+FROM base AS prepare
 
 # Copy only the go.mod and go.sum files to cache dependencies
 COPY go.mod go.sum Makefile ./
