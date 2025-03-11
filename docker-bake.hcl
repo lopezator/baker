@@ -1,9 +1,5 @@
 variable "DATABASE_URL" {}
 
-variable "GOLANG_IMAGE" {
-  default = "golang:1.23.2-bullseye"
-}
-
 group "default" {
   targets = ["base", "prepare", "sanity-check", "test", "build"]
 }
@@ -32,6 +28,10 @@ target "prepare" {
   target = "prepare"
   depends = ["base"]
 
+  cache-from = [
+    "type=registry,ref=lopezator/baker:build"
+  ]
+
   output = [
     "type=cacheonly"
   ]
@@ -41,6 +41,10 @@ target "sanity-check" {
   target     = "sanity-check"
   depends    = ["prepare"]
 
+  cache-from = [
+    "type=registry,ref=lopezator/baker:build"
+  ]
+
   output = [
     "type=cacheonly"
   ]
@@ -49,6 +53,10 @@ target "sanity-check" {
 target "test" {
   target     = "test"
   depends    = ["prepare"]
+
+  cache-from = [
+    "type=registry,ref=lopezator/baker:build"
+  ]
 
   args = {
     DATABASE_URL = "${DATABASE_URL}"
@@ -62,6 +70,10 @@ target "test" {
 target "build" {
   target     = "build"
   depends    = ["prepare"]
+
+  cache-from = [
+    "type=registry,ref=lopezator/baker:build"
+  ]
 
   output = [
     "type=cacheonly"
