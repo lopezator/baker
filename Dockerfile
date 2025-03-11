@@ -1,21 +1,24 @@
 # Base stage for dependencies and tools.
 FROM golang:1.23.2-bullseye AS base
 
+# Copy source code.
+WORKDIR /go/src/github.com/lopezator/baker
+
 # Install golangci-lint.
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v1.61.0
+
+# Copy only the go.mod and go.sum files to cache dependencies
+COPY go.mod go.sum Makefile ./
 
 # Prepare stage: Cache go modules.
 FROM base AS prepare
 
-# Copy source code.
-WORKDIR /go/src/github.com/lopezator/baker
-
-# Copy the rest of the source code.
-COPY --link . .
-
 # Cache go modules
 RUN --mount=type=cache,target=/go/pkg/mod \
     make prepare
+
+# Copy the rest of the source code.
+COPY --link . .
 
 # Lint stage: Cache golangci-lint.
 FROM prepare AS sanity-check

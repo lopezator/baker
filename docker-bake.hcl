@@ -15,6 +15,10 @@ target "base" {
     "lopezator/baker:build"
   ]
 
+  cache-to = [
+    "type=registry,ref=lopezator/baker:build,mode=max",
+  ]
+
   output = [
     "type=image"
   ]
@@ -55,16 +59,8 @@ target "build" {
   target     = "build"
   depends    = ["prepare"]
 
-  tags = [
-    "lopezator/baker:build"
-  ]
-
-  cache-to = [
-    "type=registry,ref=lopezator/baker:build,mode=max",
-  ]
-
   output = [
-    "type=image"
+    "type=cacheonly"
   ]
 }
 
