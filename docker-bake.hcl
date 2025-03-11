@@ -11,8 +11,12 @@ target "base" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
+  tags = [
+    "lopezator/baker:build"
+  ]
+
   output = [
-    "type=cacheonly"
+    "type=image"
   ]
 }
 
