@@ -1,7 +1,5 @@
-ARG GOLANG_IMAGE=golang:1.23.2-bullseye
-
 # Base stage for dependencies and tools.
-FROM ${GOLANG_IMAGE} AS base
+FROM golang:1.23.2-bullseye AS base
 
 # Copy source code.
 WORKDIR /go/src/github.com/lopezator/baker
@@ -18,11 +16,13 @@ COPY go.mod go.sum Makefile ./
 RUN --mount=type=cache,target=/go/pkg/mod \
 	make prepare
 
+# Lint stage: Cache golangci-lint.
+FROM prepare AS sanity-check
+
 # Copy the rest of the source code.
 COPY . .
 
-# Lint stage: Cache golangci-lint.
-FROM prepare AS sanity-check
+# Run sanity check.
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/golangci-lint \
     make sanity-check
