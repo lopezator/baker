@@ -5,7 +5,7 @@ variable "GOLANG_IMAGE" {
 }
 
 group "default" {
-  targets = ["prepare", "sanity-check", "test", "build"]
+  targets = ["base", "prepare", "sanity-check", "test", "build"]
 }
 
 target "base" {
