@@ -5,11 +5,11 @@ variable "GOLANG_IMAGE" {
 }
 
 group "default" {
-  targets = ["prepare", "sanity-check", "test", "build"]
+  targets = ["base", "prepare", "sanity-check", "test", "build"]
 }
 
-target "prepare" {
-  target = "prepare"
+target "base" {
+  target = "base"
 
   cache-from = [
     "type=registry,ref=lopezator/baker:build"
@@ -25,6 +25,15 @@ target "prepare" {
 
   output = [
     "type=image"
+  ]
+}
+
+target "prepare" {
+  target = "prepare"
+  depends = ["base"]
+
+  output = [
+    "type=cacheonly"
   ]
 }
 
