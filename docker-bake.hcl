@@ -16,7 +16,7 @@ target "base" {
   ]
 
   cache-to = [
-    "type=registry,ref=lopezator/baker:build,mode=max",
+    "type=inline",
   ]
 
   output = [
