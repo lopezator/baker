@@ -1,15 +1,32 @@
 variable "DATABASE_URL" {}
 
 group "default" {
-  targets = ["prepare", "sanity-check", "test", "build"]
+  targets = ["base", "prepare", "sanity-check", "test", "build"]
 }
 
-target "prepare" {
-  target = "prepare"
+target "base" {
+  target = "base"
 
   cache-from = [
     "type=registry,ref=lopezator/baker:build"
   ]
+
+  tags = [
+    "lopezator/baker:build"
+  ]
+
+  cache-to = [
+    "type=registry,ref=lopezator/baker:build,mode=max",
+  ]
+
+  output = [
+    "type=image"
+  ]
+}
+
+target "prepare" {
+  target = "prepare"
+  depends = ["base"]
 
   output = [
     "type=cacheonly"
@@ -42,16 +59,8 @@ target "build" {
   target     = "build"
   depends    = ["prepare"]
 
-  tags = [
-    "lopezator/baker:build"
-  ]
-
-  cache-to = [
-    "type=registry,ref=lopezator/baker:build,mode=max",
-  ]
-
   output = [
-    "type=image"
+    "type=cacheonly"
   ]
 }
 
