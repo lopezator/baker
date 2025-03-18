@@ -11,12 +11,8 @@ target "base" {
     "type=registry,ref=lopezator/baker:build"
   ]
 
-  tags = [
-    "lopezator/baker:build"
-  ]
-
   cache-to = [
-    "type=inline,mode=max",
+    "type=inline",
   ]
 
   output = [
@@ -28,8 +24,12 @@ target "prepare" {
   target = "prepare"
   depends = ["base"]
 
+  cache-to = [
+    "type=inline",
+  ]
+
   output = [
-    "type=cacheonly"
+    "type=image"
   ]
 }
 
@@ -37,8 +37,12 @@ target "sanity-check" {
   target     = "sanity-check"
   depends    = ["prepare"]
 
+  cache-to = [
+    "type=inline",
+  ]
+
   output = [
-    "type=cacheonly"
+    "type=image"
   ]
 }
 
@@ -50,8 +54,12 @@ target "test" {
     DATABASE_URL = "${DATABASE_URL}"
   }
 
+  cache-to = [
+    "type=inline",
+  ]
+
   output = [
-    "type=cacheonly"
+    "type=image"
   ]
 }
 
@@ -59,8 +67,16 @@ target "build" {
   target     = "build"
   depends    = ["prepare"]
 
+  cache-to = [
+    "type=registry,ref=lopezator/baker:build,mode=max",
+  ]
+
+  tags = [
+    "lopezator/baker:build"
+  ]
+
   output = [
-    "type=cacheonly"
+    "type=image"
   ]
 }
 
