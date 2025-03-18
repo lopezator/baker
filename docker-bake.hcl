@@ -16,7 +16,7 @@ target "base" {
   ]
 
   cache-to = [
-    "type=inline",
+    "type=inline,mode=max",
   ]
 
   output = [
